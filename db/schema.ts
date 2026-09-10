@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { integer, jsonb, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -14,6 +14,15 @@ export const projects = pgTable('projects', {
   projectName: varchar('projectName').notNull(),
   userEmail: varchar('userEmail').notNull(),
   createdAt : timestamp("created_at").defaultNow().notNull(),
+})
+
+export const WhiteBoardData = pgTable('whiteBoardData', {
+  id: serial("id").primaryKey(),
+  projectId: varchar('projectId').notNull().unique().references(() => projects.projectId),
+  elements: jsonb('elements'),
+  appState: jsonb('appState'),
+  files: jsonb('files'),
+  updatedAt: timestamp("created_at").defaultNow().notNull(),
 })
 
 
