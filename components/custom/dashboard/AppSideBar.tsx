@@ -14,6 +14,7 @@ import { useUser } from "@clerk/nextjs"
 import { Archive, Files, LayoutGrid, Settings, Sparkle, Sparkles, UserRound, Users2Icon } from "lucide-react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
+import CreateNewBoardDialogue from "./CreateNewBoardDialogue"
 
 export function AppSidebar() {
 
@@ -29,7 +30,7 @@ export function AppSidebar() {
       </ SidebarHeader>
       <SidebarContent>
         <SidebarGroup> 
-            <Button> + Create New Board</Button>
+             < CreateNewBoardDialogue />
             <SidebarGroupLabel className="mt-5"> <h1>My boards</h1></SidebarGroupLabel>
             <SidebarMenuButton className="p-5 mt-2" isActive = {path === "/dashboard"}>
                 <LayoutGrid />
@@ -60,7 +61,7 @@ export function AppSidebar() {
         </SidebarGroup >
       </SidebarContent>
       <SidebarFooter> 
-        <Button>+ Create New Board</Button>
+        < CreateNewBoardDialogue />
         <div className="p-4 my-3 border rounded-md">
             <h2 className="text-sm flex justify-between mb-1">2 Files Created <span>total 3</span></h2>
             <Progress value = {66} className = "h-2 mt-2"/>
