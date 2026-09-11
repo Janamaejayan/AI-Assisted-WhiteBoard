@@ -1,50 +1,381 @@
 'use client'
-import React, { useRef, useState } from 'react'
+
+import React, { useEffect, useRef, useState } from 'react'
 import { Excalidraw } from '@excalidraw/excalidraw'
-import "@excalidraw/excalidraw/index.css"
+import '@excalidraw/excalidraw/index.css'
 import axios from 'axios'
 import { useParams } from 'next/navigation'
-import { toast } from '@/components/ui/toast'
 
+import {
+    ArrowRight,
+    Circle,
+    Diamond,
+    Eraser,
+    Hand,
+    Image,
+    Minus,
+    MousePointer2,
+    Pencil,
+    ScanLine,
+    Square,
+    Type,
+} from 'lucide-react'
+
+import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
+
+import './whiteboard.css'
+
+type ToolName =
+    | 'hand'
+    | 'selection'
+    | 'rectangle'
+    | 'diamond'
+    | 'ellipse'
+    | 'arrow'
+    | 'line'
+    | 'freedraw'
+    | 'text'
+    | 'image'
+    | 'eraser'
+    | 'laser'
+
+type Tool = {
+    name: ToolName
+    icon: React.ElementType
+    color: string
+    shortcut?: string
+}
+
+const tools: Tool[] = [
+    {
+        name: 'hand',
+        icon: Hand,
+        color: 'text-cyan-500',
+    },
+    {
+        name: 'selection',
+        icon: MousePointer2,
+        color: 'text-blue-500',
+        shortcut: '1',
+    },
+    {
+        name: 'rectangle',
+        icon: Square,
+        color: 'text-red-500',
+        shortcut: '2',
+    },
+    {
+        name: 'diamond',
+        icon: Diamond,
+        color: 'text-purple-500',
+        shortcut: '3',
+    },
+    {
+        name: 'ellipse',
+        icon: Circle,
+        color: 'text-green-500',
+        shortcut: '4',
+    },
+    {
+        name: 'arrow',
+        icon: ArrowRight,
+        color: 'text-orange-500',
+        shortcut: '5',
+    },
+    {
+        name: 'line',
+        icon: Minus,
+        color: 'text-yellow-600',
+        shortcut: '6',
+    },
+    {
+        name: 'freedraw',
+        icon: Pencil,
+        color: 'text-pink-500',
+        shortcut: '7',
+    },
+    {
+        name: 'text',
+        icon: Type,
+        color: 'text-indigo-500',
+        shortcut: '8',
+    },
+    {
+        name: 'image',
+        icon: Image,
+        color: 'text-emerald-500',
+        shortcut: '9',
+    },
+    {
+        name: 'eraser',
+        icon: Eraser,
+        color: 'text-gray-500',
+        shortcut: '0',
+    },
+    {
+        name: 'laser',
+        icon: ScanLine,
+        color: 'text-red-600',
+        shortcut: 'k'
+    },
+]
 
 const WhiteBoard = () => {
+    const [excalidrawAPI, setExcalidrawAPI] =
+        useState<ExcalidrawImperativeAPI | null>(null)
 
-    const [excalidrawAPI, setExcalidrawAPI] = useState(null);
-    const saveTimeRef = useRef <any> (null);
-    const {projectId} = useParams();
+    // Selection is active initially
+    const [activeTool, setActiveTool] =
+        useState<ToolName>('selection')
 
-    const handleCanvasChange = (elements: readonly any[], appState : any, files: any ) =>{
-        if (saveTimeRef?.current){
-            clearTimeout(saveTimeRef.current)
-        }
+    const saveTimeRef =
+        useRef<ReturnType<typeof setTimeout> | null>(null)
 
-        saveTimeRef.current = setTimeout(() =>{
-            saveCanvasChanges(elements, appState, files);
-            toast.add({
-                title: 'Changes Saved',
-                type: 'success'
-            })
-        }, 10000)
-    }
+    const { projectId } = useParams()
 
-    const saveCanvasChanges = async (elements: readonly any[], appState : any, files: any ) =>{
-        const result = await axios.post('/api/whiteboard', {
-            elements: elements,
-            appState: appState,
-            files: files,
-            projectId: projectId
+    /**
+     * Change the active Excalidraw tool.
+     *
+     * This is the single function used by:
+     * - Mouse clicks
+     * - Keyboard shortcuts
+     */
+    const changeTool = (tool: ToolName) => {
+        if (!excalidrawAPI) return
 
+        // Update custom toolbar highlight
+        setActiveTool(tool)
+
+        // Update actual Excalidraw tool
+        excalidrawAPI.setActiveTool({
+            type: tool,
         })
     }
 
-    
+    /**
+     * Keyboard shortcuts
+     *
+     * 1 = Selection
+     * 2 = Rectangle
+     * 3 = Diamond
+     * 4 = Ellipse
+     * 5 = Arrow
+     * 6 = Line
+     * 7 = Freedraw
+     * 8 = Text
+     * 9 = Image
+     * 0 = Eraser
+     *
+     * Hand and Laser don't have shortcuts.
+     */
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const target = event.target as HTMLElement | null
+
+            // Don't activate shortcuts while typing
+            if (
+                target?.tagName === 'INPUT' ||
+                target?.tagName === 'TEXTAREA' ||
+                target?.isContentEditable
+            ) {
+                return
+            }
+
+            // Find the tool associated with the pressed key
+            const tool = tools.find(
+                (tool) => tool.shortcut === event.key
+            )
+
+            if (!tool) return
+
+            // Stop Excalidraw/browser from handling the key
+            event.preventDefault()
+            event.stopPropagation()
+
+            // This updates BOTH:
+            // 1. Excalidraw's active tool
+            // 2. Our toolbar's active highlight
+            changeTool(tool.name)
+        }
+
+        /**
+         * Use capture phase.
+         *
+         * Excalidraw has its own keyboard handlers, so a normal
+         * bubbling listener can sometimes not receive the event.
+         */
+        document.addEventListener(
+            'keydown',
+            handleKeyDown,
+            true
+        )
+
+        return () => {
+            document.removeEventListener(
+                'keydown',
+                handleKeyDown,
+                true
+            )
+        }
+    }, [excalidrawAPI])
+
+    /**
+     * Canvas change handler
+     */
+    const handleCanvasChange = (
+        elements: readonly any[],
+        appState: any,
+        files: any
+    ) => {
+        if (saveTimeRef.current) {
+            clearTimeout(saveTimeRef.current)
+        }
+
+        saveTimeRef.current = setTimeout(() => {
+            // saveCanvasChanges(elements, appState, files)
+        }, 10000)
+    }
+
+    /**
+     * Save canvas changes
+     */
+    const saveCanvasChanges = async (
+        elements: readonly any[],
+        appState: any,
+        files: any
+    ) => {
+        await axios.post('/api/whiteboard', {
+            elements,
+            appState,
+            files,
+            projectId,
+        })
+    }
+
     return (
-        <div style={{ height: '90vh'}}>
-            <Excalidraw 
-                //@ts-ignore
-                excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        <div className="relative h-[90vh]">
+            <Excalidraw
+                // @ts-ignore
+                excalidrawAPI={(api) => {
+                    setExcalidrawAPI(api)
+
+                    // Default tool
+                    api.setActiveTool({
+                        type: 'selection',
+                    })
+                }}
                 onChange={handleCanvasChange}
             />
+
+            {/* ================================
+                Custom Top Toolbar
+            ================================= */}
+            <div
+                className="
+                    absolute
+                    left-1/2
+                    top-3
+                    z-50
+                    -translate-x-1/2
+
+                    flex
+                    items-center
+                    gap-1
+
+                    rounded-xl
+                    border
+                    border-gray-200
+                    bg-white
+                    p-1.5
+
+                    shadow-lg
+                "
+            >
+                {tools.map((tool) => {
+                    const Icon = tool.icon
+
+                    const isActive =
+                        activeTool === tool.name
+
+                    return (
+                        <button
+                            key={tool.name}
+                            type="button"
+                            onClick={() => changeTool(tool.name)}
+                            title={
+                                tool.shortcut
+                                    ? `${tool.name} (${tool.shortcut})`
+                                    : tool.name
+                            }
+                            className={`
+                                group
+                                relative
+
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
+
+                                rounded-lg
+
+                                transition-all
+                                duration-150
+
+                                active:scale-95
+
+                                ${
+                                    isActive
+                                        ? 'bg-blue-100'
+                                        : 'hover:bg-gray-100'
+                                }
+                            `}
+                        >
+                            {/* Tool Icon */}
+                            <Icon
+                                size={19}
+                                strokeWidth={2}
+                                className={`
+                                    ${tool.color}
+
+                                    transition-transform
+                                    duration-150
+
+                                    group-hover:scale-110
+                                `}
+                            />
+
+                            {/* Shortcut
+                                Bottom-right corner
+                                No border / no separate box
+                            */}
+                            {tool.shortcut && (
+                                <span
+                                    className={`
+                                        pointer-events-none
+
+                                        absolute
+                                        bottom-0.5
+                                        right-1
+
+                                        text-[9px]
+                                        font-semibold
+                                        leading-none
+
+                                        ${
+                                            isActive
+                                                ? 'text-blue-600'
+                                                : 'text-gray-400'
+                                        }
+                                    `}
+                                >
+                                    {tool.shortcut}
+                                </span>
+                            )}
+                        </button>
+                    )
+                })}
+            </div>
         </div>
     )
 }
