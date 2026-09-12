@@ -24,6 +24,8 @@ import {
 import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
 
 import './whiteboard.css'
+import FloatingProperties from './FloatingProperties'
+import { version } from 'os'
 
 type ToolName =
     | 'hand'
@@ -127,6 +129,10 @@ const WhiteBoard = () => {
     // Selection is active initially
     const [activeTool, setActiveTool] =
         useState<ToolName>('selection')
+    
+    const [selectedElement, setSelectedElement] = useState <any> (null);
+
+    const [canvasState, setCanvasState] = useState <any> (null);
 
     const saveTimeRef =
         useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -152,22 +158,6 @@ const WhiteBoard = () => {
         })
     }
 
-    /**
-     * Keyboard shortcuts
-     *
-     * 1 = Selection
-     * 2 = Rectangle
-     * 3 = Diamond
-     * 4 = Ellipse
-     * 5 = Arrow
-     * 6 = Line
-     * 7 = Freedraw
-     * 8 = Text
-     * 9 = Image
-     * 0 = Eraser
-     *
-     * Hand and Laser don't have shortcuts.
-     */
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             const target = event.target as HTMLElement | null
@@ -227,6 +217,22 @@ const WhiteBoard = () => {
         appState: any,
         files: any
     ) => {
+
+        setCanvasState(appState);
+
+        const selectedIds = Object.keys(
+            appState.selectedElementIds || {}
+        )
+
+        if (selectedIds?.length == 1){
+            const element = elements.find(
+                (element) => element.id == selectedIds[0]
+            )
+            setSelectedElement(element)
+        } else{
+            setSelectedElement(null);
+        }
+  
         if (saveTimeRef.current) {
             clearTimeout(saveTimeRef.current)
         }
@@ -235,6 +241,33 @@ const WhiteBoard = () => {
             // saveCanvasChanges(elements, appState, files)
         }, 10000)
     }
+
+    const getFloatingPosition = () =>{
+        if (!selectedElement || !canvasState){
+            return {left: 0, top: 0}
+        }
+
+        const zoom = canvasState.zoom?.value ?? 1
+
+        const scrollX = canvasState.scrollX ?? 0
+
+        const scrollY = canvasState.scrollY ?? 0
+
+        const centerX = selectedElement.x + selectedElement.width / 2
+
+        const screenX = (centerX + scrollX) * zoom;
+
+        const screenY = (selectedElement.y + scrollY) * zoom;
+
+        return {
+            left: screenX,
+            top: screenY - 60
+        }
+
+    }
+
+    const floatingPosition = getFloatingPosition();
+    console.log(floatingPosition);
 
     /**
      * Save canvas changes
@@ -251,6 +284,136 @@ const WhiteBoard = () => {
             projectId,
         })
     }
+
+    const handlePropertyChange = (property: string, value: any) =>{
+        if(!excalidrawAPI || !selectedElement) return;
+
+        const elements = excalidrawAPI.getSceneElements();
+
+        const updatedElement = elements.map((element) =>{
+            if (element.id != selectedElement.id){
+                return element;
+            }
+            return {
+                ...element, [property] : value, version : element.version + 1,
+                updated: Date.now()
+            }
+        });
+
+        excalidrawAPI.updateScene({
+            elements : updatedElement
+        })
+
+    }
+
+    const handleDeleteElement = () =>{
+        if(!excalidrawAPI || !selectedElement) return;
+
+        const element = excalidrawAPI.getSceneElements();
+
+        const updatedElements = element.map((element) =>{
+            if (element.id === selectedElement.id){
+                return {
+                    ...element, isDeleted: true, version : element.version + 1,
+                    updated: Date.now()
+                }
+            }
+
+            return element;
+        });
+
+        excalidrawAPI.updateScene({
+            elements : updatedElements
+        });
+
+        setSelectedElement(null);
+    }
+
+    const handleDuplicate = () =>{
+        if(!excalidrawAPI || !selectedElement) return;
+
+        const elements = excalidrawAPI.getSceneElements();
+
+        const duplicateElement = {
+            ...selectedElement,
+            id: crypto.randomUUID(),
+            x : selectedElement.x + 25,
+            y : selectedElement.y + 25,
+            seed: Math.floor(Math.random() * 1000000),
+            version: 1,
+            updated: Date.now(),
+            isDeleted: false
+        };
+
+        excalidrawAPI.updateScene({
+            elements: [...elements, duplicateElement],
+            appState: {
+            selectedElementIds: {
+                [duplicateElement.id]: true,
+            },
+        },
+        })
+
+        setSelectedElement(duplicateElement);
+    }
+
+    const handleBringFront = (str : string) =>{
+        if(!excalidrawAPI || !selectedElement) return;
+
+        const elements = excalidrawAPI.getSceneElements();
+
+        const selected = elements.find((element) => element.id == selectedElement.id);
+
+        if (!selected) return;
+
+        const remElements =  elements.filter((element) =>
+            element.id != selectedElement.id)
+
+        if (str === 'front'){
+            excalidrawAPI.updateScene({
+                elements: [                    
+                    ...remElements,
+                    selected
+                ]
+            })
+        }else{
+            excalidrawAPI.updateScene({
+                elements: [  
+                    selected,                  
+                    ...remElements,
+                    
+                ]
+            })
+        }
+    }
+
+    const handleLock = () => {
+        if (!excalidrawAPI || !selectedElement) return;
+
+        const elements = excalidrawAPI.getSceneElements();
+
+        const updatedElements = elements.map((element) => {
+            if (element.id === selectedElement.id) {
+                return {
+                    ...element,
+                    locked: !element.locked,
+                    version: element.version + 1,
+                    updated: Date.now(),
+                };
+            }
+
+            return element;
+        });
+
+        excalidrawAPI.updateScene({
+            elements: updatedElements,
+        });
+
+        setSelectedElement((prev: any) => ({
+            ...prev,
+            locked: !prev.locked,
+        }));
+    };
 
     return (
         <div className="relative h-[90vh]">
@@ -376,6 +539,16 @@ const WhiteBoard = () => {
                     )
                 })}
             </div>
+
+            <FloatingProperties selectedElement={selectedElement} position={floatingPosition}
+                onPropertyChange = {(propertyName, value) => handlePropertyChange(propertyName, value)}
+                onDelete={handleDeleteElement}
+                onDuplicate={handleDuplicate}
+                onBringToFront={() => handleBringFront('front')}
+                onSendToBack={() => handleBringFront('back')}
+                onLock={handleLock}
+                
+            />
         </div>
     )
 }
