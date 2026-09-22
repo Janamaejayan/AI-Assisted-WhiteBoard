@@ -23,10 +23,11 @@ import {
 } from "@/lib/excalidraw";
 
 type Props ={
-    excalidrawApi : ExcalidrawImperativeAPI | null
+    excalidrawApi : ExcalidrawImperativeAPI | null,
+    onClose: () => void;
 }
 
-const AISidebar = ({excalidrawApi} : Props) => {
+const AISidebar = ({excalidrawApi, onClose} : Props) => {
 
     const Aitools = [
         {
@@ -634,6 +635,7 @@ const AISidebar = ({excalidrawApi} : Props) => {
                     <button
                         type="button"
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                        onClick={onClose}
                     >
                         <X size={18} />
                     </button>

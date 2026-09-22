@@ -9,9 +9,10 @@ import { Save, Share, DownloadIcon } from 'lucide-react'
 type Props = {
     selectedTab: (value: string) => void;
     onExport : any;
+    projectName : string;
 }
 
-const Header = ({ selectedTab, onExport }: Props) => {
+const Header = ({ selectedTab, onExport, projectName }: Props) => {
     return (
         <div className='p-3 border-b flex justify-between'>
 
@@ -22,7 +23,7 @@ const Header = ({ selectedTab, onExport }: Props) => {
                     width={35}
                     height={35}
                 />
-                <h2>Workspace Name</h2>
+                <h2>{projectName}</h2>
             </div>
 
             <div>

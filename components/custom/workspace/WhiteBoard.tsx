@@ -247,7 +247,7 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         }
 
         saveTimeRef.current = setTimeout(() => {
-            // saveCanvasChanges(elements, appState, files)
+            saveCanvasChanges(elements, appState, files)
         }, 10000)
     }
 
@@ -276,7 +276,7 @@ const WhiteBoard = ({ onApiReady }: Props) => {
     }
 
     const floatingPosition = getFloatingPosition();
-    console.log(floatingPosition);
+    //console.log(floatingPosition);
 
     /**
      * Save canvas changes
@@ -286,12 +286,16 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         appState: any,
         files: any
     ) => {
-        await axios.post('/api/whiteboard', {
+        const res = await axios.post('/api/whiteboard', {
             elements,
             appState,
             files,
             projectId,
         })
+
+        if(res){
+            console.log('saved successfully');
+        }
     }
 
     const handlePropertyChange = (property: string, value: any) =>{
@@ -422,6 +426,10 @@ const WhiteBoard = ({ onApiReady }: Props) => {
             ...prev,
             locked: !prev.locked,
         }));
+    };
+
+    const handleCloseSideBar = () => {
+        setShowAISidebar(false);
     };
 
     return (
@@ -566,7 +574,7 @@ const WhiteBoard = ({ onApiReady }: Props) => {
                 </Button>
             </div>
 
-            {showAISidebar && < AISidebar excalidrawApi={excalidrawAPI}/>}
+            {showAISidebar && < AISidebar excalidrawApi={excalidrawAPI} onClose={handleCloseSideBar}/>}
         </div>
     )
 }
