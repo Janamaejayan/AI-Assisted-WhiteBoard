@@ -13,6 +13,7 @@ import {
     Eraser,
     Hand,
     Image,
+    LucideSparkles,
     Minus,
     MousePointer2,
     Pencil,
@@ -26,6 +27,12 @@ import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
 import './whiteboard.css'
 import FloatingProperties from './FloatingProperties'
 import { version } from 'os'
+import { Button } from '@/components/ui/button'
+import AISidebar from './AISidebar'
+
+type Props = {
+    onApiReady : ( api :ExcalidrawImperativeAPI ) => void;
+}
 
 type ToolName =
     | 'hand'
@@ -122,8 +129,8 @@ const tools: Tool[] = [
     },
 ]
 
-const WhiteBoard = () => {
-    const [excalidrawAPI, setExcalidrawAPI] =
+const WhiteBoard = ({ onApiReady }: Props) => {
+        const [excalidrawAPI, setExcalidrawAPI] =
         useState<ExcalidrawImperativeAPI | null>(null)
 
     // Selection is active initially
@@ -135,7 +142,9 @@ const WhiteBoard = () => {
     const [canvasState, setCanvasState] = useState <any> (null);
 
     const saveTimeRef =
-        useRef<ReturnType<typeof setTimeout> | null>(null)
+        useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const [showAISidebar, setShowAISidebar] = useState(false);
 
     const { projectId } = useParams()
 
@@ -420,7 +429,8 @@ const WhiteBoard = () => {
             <Excalidraw
                 // @ts-ignore
                 excalidrawAPI={(api) => {
-                    setExcalidrawAPI(api)
+                    setExcalidrawAPI(api);
+                    onApiReady(api);
 
                     // Default tool
                     api.setActiveTool({
@@ -549,6 +559,14 @@ const WhiteBoard = () => {
                 onLock={handleLock}
                 
             />
+
+            <div className='absolute right-15 bottom-3 z-50'>
+                <Button size = {'lg'} onClick={() => setShowAISidebar(!showAISidebar)}>
+                    < LucideSparkles /> AI
+                </Button>
+            </div>
+
+            {showAISidebar && < AISidebar excalidrawApi={excalidrawAPI}/>}
         </div>
     )
 }

@@ -1,47 +1,53 @@
-import { ClerkProvider } from '@clerk/nextjs';
-import "./globals.css";
-import type { Metadata } from "next";
-import Provider from './Provider';
-import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
-import { Toaster } from '@/components/ui/toast';
+import { ClerkProvider } from '@clerk/nextjs'
+import './globals.css'
+import type { Metadata } from 'next'
+import Provider from './Provider'
+import { Geist } from 'next/font/google'
+import { Toaster } from '@/components/ui/toast'
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({
+    variable: '--font-geist',
+    subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "Next.js Premium Startup Boilerplate",
-  description: "Created using the ultimate interactive Next.js stack generator CLI.",
-};
+    title: 'AI Whiteboard',
+    description: 'AI powered collaborative whiteboard',
+}
 
-const isClerkConfigured = 
-  !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && 
-  !!process.env.CLERK_SECRET_KEY;
+const isClerkConfigured =
+    !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
+    !!process.env.CLERK_SECRET_KEY
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode
 }>) {
-  if (!isClerkConfigured) {
-    return (
-      <html lang="en" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
-        <body style={{ margin: 0, padding: 0 }}>
-          {children}
-        </body>
-      </html>
-    );
-  }
+    if (!isClerkConfigured) {
+        return (
+            <html
+                lang="en"
+                suppressHydrationWarning
+            >
+                <body className={geist.variable}>
+                    {children}
+                </body>
+            </html>
+        )
+    }
 
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body style={{ margin: 0, padding: 0 }}>
-          <Provider>
-            {children}
-          </Provider>
-          <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
-  );
+    return (
+        <ClerkProvider>
+            <html lang="en">
+                <body className={geist.variable}>
+                    <Provider>
+                        {children}
+                    </Provider>
+
+                    <Toaster />
+                </body>
+            </html>
+        </ClerkProvider>
+    )
 }

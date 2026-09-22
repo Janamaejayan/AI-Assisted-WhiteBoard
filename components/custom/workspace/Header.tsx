@@ -4,13 +4,14 @@ import Image from 'next/image'
 import React from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from '@/components/ui/button'
-import { Save, Share } from 'lucide-react'
+import { Save, Share, DownloadIcon } from 'lucide-react'
 
 type Props = {
     selectedTab: (value: string) => void;
+    onExport : any;
 }
 
-const Header = ({ selectedTab }: Props) => {
+const Header = ({ selectedTab, onExport }: Props) => {
     return (
         <div className='p-3 border-b flex justify-between'>
 
@@ -48,6 +49,8 @@ const Header = ({ selectedTab }: Props) => {
                 </Button>
                 < Button variant={'outline'}>
                 <Share/> Share</Button>
+
+                <Button onClick={onExport}> <DownloadIcon /> Export </Button>
             </div>
 
         </div>
