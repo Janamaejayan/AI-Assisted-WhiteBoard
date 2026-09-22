@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import { Excalidraw } from '@excalidraw/excalidraw'
+import { Excalidraw, exportToBlob } from '@excalidraw/excalidraw'
 import '@excalidraw/excalidraw/index.css'
 import axios from 'axios'
 import { useParams } from 'next/navigation'
@@ -286,17 +286,64 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         appState: any,
         files: any
     ) => {
+
+        const base64ImagePreview = await generatePreviewBase64();
         const res = await axios.post('/api/whiteboard', {
             elements,
             appState,
             files,
             projectId,
+            base64ImagePreview
         })
 
         if(res){
             console.log('saved successfully');
         }
     }
+
+   
+    const blobToBase64 = (blob: Blob): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.onerror = reject
+
+            reader.readAsDataURL(blob)
+        })
+    }
+
+    const generatePreviewBase64 = async () => {
+        if (!excalidrawAPI) return null
+
+        const elements = excalidrawAPI.getSceneElements()
+
+        if (!elements.length) return null
+
+        const appState = excalidrawAPI.getAppState()
+        const files = excalidrawAPI.getFiles()
+
+        const blob = await exportToBlob({
+            elements,
+            appState: {
+                ...appState,
+                exportBackground: true,
+                exportWithDarkMode: false
+            },
+            files,
+            mimeType: "image/webp",
+            quality: 0.5,
+            getDimensions: () => ({
+                width: 400,
+                height: 225,
+                scale: 1
+            })
+        })
+
+        return await blobToBase64(blob)
+    }
+
+
 
     const handlePropertyChange = (property: string, value: any) =>{
         if(!excalidrawAPI || !selectedElement) return;

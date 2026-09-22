@@ -13,12 +13,14 @@ import {
 import { useUser } from "@clerk/nextjs"
 import { Archive, Files, LayoutGrid, Settings, Sparkle, Sparkles, UserRound, Users2Icon } from "lucide-react"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import defaultImg from '../../../public/logo.svg'
 import CreateNewBoardDialogue from "./CreateNewBoardDialogue"
 
 export function AppSidebar() {
 
     const path = usePathname();
+    const router = useRouter();
     const {user} = useUser();
   return (
     <Sidebar>
@@ -32,7 +34,7 @@ export function AppSidebar() {
         <SidebarGroup> 
              < CreateNewBoardDialogue />
             <SidebarGroupLabel className="mt-5"> <h1>My boards</h1></SidebarGroupLabel>
-            <SidebarMenuButton className="p-5 mt-2" isActive = {path === "/dashboard"}>
+            <SidebarMenuButton className="p-5 mt-2" isActive = {path === "/dashboard"} onClick = {() => router.push('/dashboard')}>
                 <LayoutGrid />
                 <span>All Files</span>
             </SidebarMenuButton>
@@ -42,7 +44,7 @@ export function AppSidebar() {
                 <span>Shared </span>
             </SidebarMenuButton>
 
-            <SidebarMenuButton className="p-5 mt-2" isActive = {path === "/archived"}>
+            <SidebarMenuButton className="p-5 mt-2" isActive = {path === "/archived"} onClick = {() => router.push('/archived')}>
                 <Archive />
                 <span>Archive </span>
             </SidebarMenuButton>
@@ -68,7 +70,7 @@ export function AppSidebar() {
         </div>
 
         <div className="flex items-center gap-2 p-4 border rounded-md">
-            <Image src={user?.imageUrl ?? ''} alt="User Image" width={40} height={40} className="rounded-full"/>
+            <Image src={user?.imageUrl ?? defaultImg} alt="User Image" width={40} height={40} className="rounded-full"/>
             <h2>{user?.firstName} {user?.lastName}</h2>
         </div>
       </SidebarFooter>
