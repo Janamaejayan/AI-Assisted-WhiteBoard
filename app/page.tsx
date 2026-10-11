@@ -1,1364 +1,179 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowRight,
-  BrainCircuit,
   Check,
+  FileText,
   Layers3,
   MousePointer2,
-  Network,
-  PenTool,
+  PenLine,
   Sparkles,
   Users,
-  Zap,
 } from "lucide-react"
+
+const features = [
+  {
+    number: "01",
+    icon: PenLine,
+    title: "Think on an open canvas",
+    description: "Sketch flows, map ideas, and connect the pieces without running out of room.",
+  },
+  {
+    number: "02",
+    icon: Sparkles,
+    title: "Move faster with AI",
+    description: "Turn a prompt into a useful starting point, then make the work your own.",
+  },
+  {
+    number: "03",
+    icon: Users,
+    title: "Work together naturally",
+    description: "Keep the conversation and the work in the same shared space.",
+  },
+]
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-background text-foreground">
-
-      {/* =====================================================
-          NAVBAR
-      ===================================================== */}
-
-      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">
-
-          <Link
-            href="/"
-            className="flex items-center gap-2.5"
-          >
-            <div className="relative">
-              <div className="absolute inset-0 rounded-xl bg-indigo-400/30 blur-md" />
-
-              <Image
-                src="/logo.svg"
-                alt="WhizBoard"
-                width={38}
-                height={38}
-                className="relative"
-              />
-            </div>
-
-            <span className="text-xl font-bold tracking-tight">
-              WhizBoard
-            </span>
+    <main className="min-h-screen bg-background text-foreground">
+      <header className="border-b border-border bg-background">
+        <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="WhizBoard home">
+            <Image src="/logo.svg" alt="" width={32} height={32} />
+            <span className="text-[17px] font-semibold tracking-tight">WhizBoard</span>
           </Link>
-
-
-          <nav className="hidden items-center gap-8 text-sm text-foreground md:flex">
-
-            <a
-              href="#features"
-              className="transition hover:text-primary"
-            >
-              Features
-            </a>
-
-            <a
-              href="#ai"
-              className="transition hover:text-primary"
-            >
-              AI
-            </a>
-
-            <a
-              href="#how-it-works"
-              className="transition hover:text-primary"
-            >
-              How it works
-            </a>
-
+          <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex" aria-label="Main navigation">
+            <a className="transition-colors hover:text-foreground" href="#features">Features</a>
+            <a className="transition-colors hover:text-foreground" href="#workflow">How it works</a>
           </nav>
-
-
-          <div className="flex items-center gap-2">
-
-            <Link
-              href="/auth?mode=signin"
-              className="
-                rounded-xl
-                px-4
-                py-2.5
-                text-sm
-                font-medium
-                text-foreground
-                transition
-                hover:bg-muted
-              "
-            >
-              Log in
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/auth?mode=signin" className="px-2 py-2 text-sm font-medium hover:text-primary">Log in</Link>
+            <Link href="/auth?mode=signup" className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+              Get started <ArrowRight size={15} />
             </Link>
-
-            <Link
-              href="/auth?mode=signup"
-              className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-xl
-                bg-gradient-to-r
-                from-indigo-600
-                to-violet-600
-                px-5
-                py-2.5
-                text-sm
-                font-semibold
-                text-white
-                shadow-lg
-                shadow-indigo-500/20
-                transition
-                hover:scale-[1.02]
-                hover:shadow-indigo-500/30
-              "
-            >
-              Get started
-              <ArrowRight size={15} />
-            </Link>
-
           </div>
-
         </div>
       </header>
 
-
-      {/* =====================================================
-          HERO
-      ===================================================== */}
-
-      <section className="relative overflow-hidden">
-
-        {/* Decorative blobs */}
-
-        <div className="
-          pointer-events-none
-          absolute
-          -left-40
-          top-10
-          h-96
-          w-96
-          rounded-full
-          bg-indigo-300/25
-          blur-3xl
-        " />
-
-        <div className="
-          pointer-events-none
-          absolute
-          right-[-120px]
-          top-32
-          h-[500px]
-          w-[500px]
-          rounded-full
-          bg-violet-300/20
-          blur-3xl
-        " />
-
-        <div className="
-          pointer-events-none
-          absolute
-          left-1/2
-          top-0
-          h-[400px]
-          w-[700px]
-          -translate-x-1/2
-          rounded-full
-          bg-cyan-200/20
-          blur-3xl
-        " />
-
-
-        <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-20 lg:pb-32 lg:pt-28">
-
-          <div className="grid items-center gap-16 lg:grid-cols-[0.9fr_1.1fr]">
-
-            {/* =================================================
-                HERO TEXT
-            ================================================= */}
-
-            <div>
-
-              <div className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-full
-                border
-                border-indigo-200 dark:border-indigo-400/20
-                bg-indigo-50 dark:bg-indigo-400/10
-                px-4
-                py-2
-                text-xs
-                font-semibold
-                text-indigo-700 dark:text-indigo-200
-              ">
-                <Sparkles size={14} />
-                AI-powered collaborative whiteboard
-              </div>
-
-
-              <h1 className="
-                mt-7
-                max-w-2xl
-                text-5xl
-                font-bold
-                leading-[1.02]
-                tracking-[-0.045em]
-                text-foreground
-                sm:text-6xl
-                lg:text-[68px]
-              ">
-                Turn ideas into
-                <br />
-
-                <span className="
-                  bg-gradient-to-r
-                  from-indigo-600
-                  via-violet-600
-                  to-cyan-500
-                  bg-clip-text
-                  text-transparent
-                ">
-                  beautiful diagrams.
-                </span>
-              </h1>
-
-
-              <p className="
-                mt-7
-                max-w-xl
-                text-base
-                leading-7
-                text-foreground
-                sm:text-lg
-              ">
-                WhizBoard brings AI-assisted diagram generation,
-                collaborative workspaces and an infinite canvas
-                together in one place.
-              </p>
-
-
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-
-                <Link
-                  href="/auth?mode=signup"
-                  className="
-                    inline-flex
-                    items-center
-                    justify-center
-                    gap-2
-                    rounded-xl
-                    bg-gradient-to-r
-                    from-indigo-600
-                    to-violet-600
-                    px-6
-                    py-3.5
-                    text-sm
-                    font-semibold
-                    text-white
-                    shadow-xl
-                    shadow-indigo-500/20
-                    transition
-                    hover:-translate-y-0.5
-                  "
-                >
-                  Start creating free
-                  <ArrowRight size={16} />
-                </Link>
-
-
-                <a
-                  href="#features"
-                  className="
-                    inline-flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    border
-                    border-border
-                    bg-background
-                    px-6
-                    py-3.5
-                    text-sm
-                    font-semibold
-                    text-foreground
-                    shadow-sm
-                    transition
-                    hover:border-indigo-200
-                    hover:bg-indigo-50 dark:hover:bg-indigo-400/10
-                    hover:text-indigo-700 dark:hover:text-indigo-200
-                  "
-                >
-                  Explore WhizBoard
-                </a>
-
-              </div>
-
-
-              {/* Mini benefits */}
-
-              <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3">
-
-                <MiniCheck text="AI diagram generation" />
-                <MiniCheck text="Real-time collaboration" />
-                <MiniCheck text="Organized workspaces" />
-
-              </div>
-
+      <section className="border-b border-border">
+        <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 pt-20 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16 lg:pb-28 lg:pt-28">
+          <div>
+            <div className="mb-7 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              <span className="h-px w-7 bg-primary" />
+              A better way to think together
             </div>
-
-
-            {/* =================================================
-                DIAGRAM PREVIEW
-            ================================================= */}
-
-            <div className="relative">
-
-              {/* Glow */}
-
-              <div className="
-                absolute
-                inset-10
-                rounded-[40px]
-                bg-gradient-to-r
-                from-indigo-400/30
-                via-violet-400/20
-                to-cyan-400/20
-                blur-3xl
-              " />
-
-
-              <div className="
-                relative
-                overflow-hidden
-                rounded-3xl
-                border
-                border-indigo-100
-                bg-background
-                shadow-[0_30px_100px_rgba(79,70,229,0.16)]
-              ">
-
-                {/* Window header */}
-
-                <div className="
-                  flex
-                  h-12
-                  items-center
-                  justify-between
-                  border-b
-                  border-border
-                  bg-background
-                  px-4
-                ">
-
-                  <div className="flex items-center gap-2">
-
-                    <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
-
-                  </div>
-
-                  <div className="
-                    rounded-md
-                    bg-muted
-                    px-4
-                    py-1
-                    text-[10px]
-                    text-muted-foreground
-                  ">
-                    WhizBoard workspace
-                  </div>
-
-                  <div className="w-12" />
-
-                </div>
-
-
-                {/* Diagram canvas */}
-
-                <div className="
-                  relative
-                  h-[490px]
-                  overflow-hidden
-                  bg-[#fbfcff]
-                ">
-
-                  {/* Grid */}
-
-                  <div
-                    className="
-                      absolute
-                      inset-0
-                      opacity-70
-                    "
-                    style={{
-                      backgroundImage:
-                        "radial-gradient(#dbe4f0 1px, transparent 1px)",
-                      backgroundSize: "24px 24px",
-                    }}
-                  />
-
-
-                  {/* Toolbar */}
-
-                  <div className="
-                    absolute
-                    left-4
-                    top-4
-                    z-10
-                    rounded-2xl
-                    border
-                    border-border
-                    bg-background/95
-                    p-2
-                    shadow-lg
-                  ">
-
-                    <ToolIcon icon={<MousePointer2 size={16} />} active />
-                    <ToolIcon icon={<PenTool size={16} />} />
-                    <ToolIcon icon={<Layers3 size={16} />} />
-                    <ToolIcon icon={<Network size={16} />} />
-
-                  </div>
-
-
-                  {/* AI badge */}
-
-                  <div className="
-                    absolute
-                    right-5
-                    top-5
-                    z-10
-                    flex
-                    items-center
-                    gap-2
-                    rounded-full
-                    border
-                    border-violet-200 dark:border-violet-400/20
-                    bg-violet-50 dark:bg-violet-400/10
-                    px-3
-                    py-2
-                    text-xs
-                    font-semibold
-                    text-violet-700 dark:text-violet-200
-                    shadow-sm
-                  ">
-                    <Sparkles size={13} />
-                    AI generated
-                  </div>
-
-
-                  {/* User */}
-
-                  <DiagramNode
-                    className="left-[17%] top-[22%]"
-                    color="blue"
-                    title="User"
-                    subtitle="Client"
-                  />
-
-
-                  {/* API */}
-
-                  <DiagramNode
-                    className="left-[43%] top-[38%]"
-                    color="violet"
-                    title="API Gateway"
-                    subtitle="REST API"
-                  />
-
-
-                  {/* Database */}
-
-                  <DiagramNode
-                    className="left-[68%] top-[22%]"
-                    color="cyan"
-                    title="Database"
-                    subtitle="PostgreSQL"
-                  />
-
-
-                  {/* Auth */}
-
-                  <DiagramNode
-                    className="left-[25%] top-[67%]"
-                    color="green"
-                    title="Auth Service"
-                    subtitle="Clerk"
-                  />
-
-
-                  {/* Payment */}
-
-                  <DiagramNode
-                    className="left-[60%] top-[68%]"
-                    color="orange"
-                    title="Payment"
-                    subtitle="Stripe"
-                  />
-
-
-                  {/* Connections */}
-
-                  <DiagramArrow
-                    className="left-[31%] top-[37%] w-[90px]"
-                  />
-
-                  <DiagramArrow
-                    className="left-[57%] top-[37%] w-[90px]"
-                  />
-
-                  <DiagramArrow
-                    className="left-[42%] top-[52%] w-[5px]"
-                    vertical
-                  />
-
-                  <DiagramArrow
-                    className="left-[51%] top-[58%] w-[95px]"
-                  />
-
-
-                  {/* Floating AI prompt */}
-
-                  <div className="
-                    absolute
-                    bottom-5
-                    left-5
-                    right-5
-                    rounded-2xl
-                    border
-                    border-white
-                    bg-slate-950/95
-                    p-4
-                    text-white
-                    shadow-2xl
-                  ">
-
-                    <div className="flex items-center gap-2">
-
-                      <div className="
-                        flex
-                        h-8
-                        w-8
-                        items-center
-                        justify-center
-                        rounded-lg
-                        bg-gradient-to-br
-                        from-indigo-500
-                        to-violet-500
-                      ">
-                        <Sparkles size={15} />
-                      </div>
-
-                      <div>
-
-                        <p className="text-xs font-semibold">
-                          AI Helper
-                        </p>
-
-                        <p className="text-[10px] text-muted-foreground">
-                          Describe what you want to create
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                    <div className="
-                      mt-3
-                      rounded-xl
-                      bg-background/10
-                      px-3
-                      py-2.5
-                      text-xs
-                      text-muted-foreground
-                    ">
-                      Create a system architecture for an
-                      e-commerce application...
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          FEATURE STRIP
-      ===================================================== */}
-
-      <section
-        id="features"
-        className="border-y border-border bg-muted/40"
-      >
-
-        <div className="mx-auto max-w-7xl px-6 py-20">
-
-          <div className="mx-auto max-w-2xl text-center">
-
-            <div className="
-              mx-auto
-              inline-flex
-              items-center
-              rounded-full
-              bg-indigo-100 dark:bg-indigo-400/15
-              px-3
-              py-1.5
-              text-xs
-              font-semibold
-              text-indigo-700 dark:text-indigo-200
-            ">
-              Everything you need
-            </div>
-
-            <h2 className="
-              mt-4
-              text-3xl
-              font-bold
-              tracking-tight
-              sm:text-4xl
-            ">
-              A better canvas for
-              <span className="text-indigo-600 dark:text-indigo-300">
-                {" "}better ideas.
-              </span>
-            </h2>
-
-            <p className="mt-4 text-sm leading-6 text-foreground">
-              From quick sketches to complex system designs,
-              WhizBoard keeps your ideas visual and organized.
+            <h1 className="max-w-[650px] text-[clamp(3.2rem,5.5vw,5.5rem)] font-semibold leading-[1.04] tracking-[-0.065em]">
+              Give your ideas room to grow.
+            </h1>
+            <p className="mt-7 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+              A focused whiteboard for mapping ideas, building diagrams, and working through complex problems with your team.
             </p>
-
-          </div>
-
-
-          <div className="
-            mt-14
-            grid
-            gap-5
-            md:grid-cols-2
-            lg:grid-cols-4
-          ">
-
-            <FeatureCard
-              icon={<Sparkles />}
-              iconClass="bg-violet-500/10 dark:bg-violet-400/15 text-violet-600 dark:text-violet-300"
-              title="AI-powered creation"
-              description="Describe a diagram in natural language and turn it into editable visual elements."
-            />
-
-            <FeatureCard
-              icon={<Users />}
-              iconClass="bg-primary/15 text-primary"
-              title="Live collaboration"
-              description="Work together on boards and keep everyone aligned in the same workspace."
-            />
-
-            <FeatureCard
-              icon={<Layers3 />}
-              iconClass="bg-emerald-100 text-emerald-600"
-              title="Organized workspaces"
-              description="Manage boards, projects and shared work in a structured workspace."
-            />
-
-            <FeatureCard
-              icon={<Zap />}
-              iconClass="bg-orange-100 text-orange-600"
-              title="Fast workflow"
-              description="Go from an idea to a useful diagram without switching between multiple tools."
-            />
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          AI SECTION
-      ===================================================== */}
-
-      <section id="ai">
-
-        <div className="mx-auto max-w-7xl px-6 py-24">
-
-          <div className="grid items-center gap-16 lg:grid-cols-2">
-
-            <div>
-
-              <div className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-lg
-                bg-violet-500/10 dark:bg-violet-400/15
-                px-3
-                py-2
-                text-xs
-                font-semibold
-                text-violet-700 dark:text-violet-200
-              ">
-                <BrainCircuit size={15} />
-                AI assistance
-              </div>
-
-              <h2 className="
-                mt-5
-                text-3xl
-                font-bold
-                tracking-tight
-                sm:text-4xl
-              ">
-                Explain it.
-                <br />
-
-                <span className="text-violet-600 dark:text-violet-300">
-                  WhizBoard visualizes it.
-                </span>
-              </h2>
-
-              <p className="
-                mt-5
-                max-w-lg
-                text-base
-                leading-7
-                text-foreground
-              ">
-                Ask WhizBoard to build a flowchart, system
-                architecture, process diagram or visual
-                explanation from a simple natural-language
-                prompt.
-              </p>
-
-              <div className="mt-8 space-y-4">
-
-                <CheckItem text="Generate structured diagrams" />
-                <CheckItem text="Keep every generated element editable" />
-                <CheckItem text="Refine diagrams using AI" />
-                <CheckItem text="Continue working on the infinite canvas" />
-
-              </div>
-
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <Link href="/auth?mode=signup" className="inline-flex items-center gap-3 rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+                Start a board <ArrowRight size={16} />
+              </Link>
+              <a href="#workflow" className="inline-flex items-center gap-2 px-2 py-3 text-sm font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">
+                See how it works
+              </a>
             </div>
+            <p className="mt-10 flex items-center gap-2 text-sm text-muted-foreground">
+              <Check size={16} className="text-primary" /> One place for sketches, diagrams, and notes.
+            </p>
+          </div>
 
-
-            {/* Prompt card */}
-
-            <div className="
-              rounded-3xl
-              border
-              border-violet-100 dark:border-violet-400/20
-              bg-gradient-to-br
-              from-indigo-50 dark:from-indigo-400/10
-              via-white dark:via-card
-              to-violet-50 dark:to-violet-400/10
-              p-6
-              shadow-xl
-              shadow-violet-100/40
-            ">
-
-              <div className="
-                rounded-2xl
-                border
-                border-border
-                bg-background
-                p-5
-                shadow-sm
-              ">
-
+          <div className="relative" aria-label="Illustration of a WhizBoard workspace">
+            <div className="absolute -inset-4 -z-10 rounded-[22px] bg-secondary" />
+            <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[0_18px_55px_-30px_rgba(23,34,44,.3)]">
+              <div className="flex h-13 items-center justify-between border-b border-border px-5">
                 <div className="flex items-center gap-3">
-
-                  <div className="
-                    flex
-                    h-10
-                    w-10
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-gradient-to-br
-                    from-indigo-500
-                    to-violet-600
-                    text-white
-                  ">
-                    <Sparkles size={18} />
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-semibold">
-                      AI Helper
-                    </p>
-
-                    <p className="text-xs text-muted-foreground">
-                      Generate a diagram
-                    </p>
-                  </div>
-
+                  <span className="flex gap-1.5"><i className="h-2 w-2 rounded-full bg-border" /><i className="h-2 w-2 rounded-full bg-border" /><i className="h-2 w-2 rounded-full bg-border" /></span>
+                  <span className="ml-2 text-xs font-medium text-muted-foreground">Product planning / Q4 roadmap</span>
                 </div>
-
-
-                <div className="
-                  mt-5
-                  rounded-xl
-                  border
-                  border-border
-                  bg-muted/60
-                  p-4
-                  text-sm
-                  leading-6
-                  text-foreground
-                ">
-                  Create a system architecture diagram
-                  containing a user, frontend, API gateway,
-                  authentication service, database and
-                  payment service.
-                </div>
-
-
-                <button className="
-                  mt-4
-                  flex
-                  w-full
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-indigo-600
-                  to-violet-600
-                  py-3
-                  text-sm
-                  font-semibold
-                  text-white
-                  shadow-lg
-                  shadow-indigo-500/20
-                ">
-                  <Sparkles size={15} />
-                  Generate diagram
-                </button>
-
+                <span className="hidden rounded border border-border px-2 py-1 text-[11px] text-muted-foreground sm:block">Shared workspace</span>
               </div>
-
+              <div className="relative min-h-[390px] bg-[radial-gradient(var(--canvas-dot)_0.8px,transparent_0.8px)] bg-[length:20px_20px] p-6 sm:min-h-[460px] sm:p-9">
+                <div className="absolute right-5 top-5 flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs text-muted-foreground shadow-sm">
+                  <span className="flex -space-x-2"><span className="h-6 w-6 rounded-full border-2 border-card bg-[#bba996]" /><span className="h-6 w-6 rounded-full border-2 border-card bg-[#6b847f]" /><span className="h-6 w-6 rounded-full border-2 border-card bg-[#c99e84]" /></span>
+                  3 collaborators
+                </div>
+                <p className="mb-6 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">From idea to action</p>
+                <div className="relative grid gap-5 pt-10 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+                    <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-accent text-primary"><Layers3 size={18} /></div>
+                    <p className="text-sm font-semibold">Explore the problem</p>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">Collect context, questions, and early ideas.</p>
+                    <div className="mt-5 flex gap-1"><span className="h-1.5 w-16 rounded bg-primary/30" /><span className="h-1.5 w-8 rounded bg-primary/15" /></div>
+                  </div>
+                  <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:mt-16">
+                    <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-[#eee8df] text-[#80664e] dark:bg-[#3a332c] dark:text-[#d6b79a]"><FileText size={18} /></div>
+                    <p className="text-sm font-semibold">Shape a direction</p>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">Connect the dots and make the next step clear.</p>
+                    <div className="mt-5 flex gap-1"><span className="h-1.5 w-12 rounded bg-[#b8a58d]" /><span className="h-1.5 w-12 rounded bg-[#b8a58d]/30" /></div>
+                  </div>
+                </div>
+                <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-lg border border-border bg-card px-4 py-3 shadow-md">
+                  <MousePointer2 size={17} className="text-primary" /><span className="h-5 w-px bg-border" /><PenLine size={17} className="text-muted-foreground" /><span className="h-5 w-px bg-border" /><Layers3 size={17} className="text-muted-foreground" />
+                </div>
+              </div>
             </div>
-
           </div>
-
         </div>
-
       </section>
 
-
-      {/* =====================================================
-          HOW IT WORKS
-      ===================================================== */}
-
-      <section
-        id="how-it-works"
-        className="
-          border-y
-          border-border
-          bg-gradient-to-b
-          from-slate-50 dark:from-muted/50
-          to-white dark:to-background
-        "
-      >
-
-        <div className="mx-auto max-w-7xl px-6 py-24">
-
-          <div className="text-center">
-
-            <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-300">
-              SIMPLE WORKFLOW
-            </p>
-
-            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              From idea to canvas
-            </h2>
-
+      <section id="features" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:py-28">
+        <div className="grid gap-8 border-b border-border pb-10 lg:grid-cols-2 lg:items-end">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Made for the way ideas happen</p>
+            <h2 className="mt-4 max-w-lg text-4xl font-semibold leading-tight tracking-[-0.045em] sm:text-5xl">Everything you need to find clarity.</h2>
           </div>
-
-
-          <div className="
-            mt-14
-            grid
-            gap-6
-            md:grid-cols-3
-          ">
-
-            <Step
-              number="01"
-              title="Create a workspace"
-              description="Create a focused space for your project, team or ideas."
-              gradient="from-blue-500 to-cyan-500"
-            />
-
-            <Step
-              number="02"
-              title="Build your diagram"
-              description="Use the infinite canvas to draw, connect and organize ideas."
-              gradient="from-indigo-500 to-violet-500"
-            />
-
-            <Step
-              number="03"
-              title="Let AI help"
-              description="Generate and refine diagrams using natural-language prompts."
-              gradient="from-violet-500 to-fuchsia-500"
-            />
-
-          </div>
-
+          <p className="max-w-md text-base leading-7 text-muted-foreground lg:justify-self-end">Move from a loose thought to a shared plan in a workspace that stays out of your way.</p>
         </div>
-
+        <div className="grid gap-0 md:grid-cols-3">
+          {features.map(({ number, icon: Icon, title, description }) => (
+            <div key={number} className="border-b border-border py-9 md:border-b-0 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0">
+              <div className="mb-10 flex items-center justify-between"><Icon size={22} strokeWidth={1.6} className="text-primary" /><span className="text-xs tabular-nums text-muted-foreground">{number} / 03</span></div>
+              <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
+              <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">{description}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
-
-      {/* =====================================================
-          CTA
-      ===================================================== */}
-
-      <section className="px-6 py-20 lg:py-24">
-
-        <div className="
-          relative
-          mx-auto
-          max-w-6xl
-          overflow-hidden
-          rounded-[32px]
-          bg-gradient-to-r
-          from-indigo-600
-          via-violet-600
-          to-fuchsia-600
-          px-8
-          py-16
-          text-center
-          text-white
-          shadow-2xl
-          shadow-violet-500/20
-          sm:px-12
-        ">
-
-          <div className="
-            pointer-events-none
-            absolute
-            -left-20
-            top-0
-            h-64
-            w-64
-            rounded-full
-            bg-background/10
-            blur-3xl
-          />
-
-          <div className="
-            pointer-events-none
-            absolute-right-20
-            bottom-0
-            h-64
-            w-64
-            rounded-full
-            bg-cyan-300
-            blur-3xl
-          />
-
-          <div className="relative">
-
-            <Sparkles className="mx-auto mb-5" size={26} />
-
-            <h2 className="
-              text-3xl
-              font-bold
-              tracking-tight
-              sm:text-4xl
-            ">
-              Your next idea starts here.
-            </h2>
-
-            <p className="
-              mx-auto
-              mt-4
-              max-w-xl
-              text-sm
-              leading-6
-              text-indigo-100
-            ">
-              Create your first WhizBoard workspace and
-              start turning ideas into visual systems.
-            </p>
-
-            <Link
-              href="/auth?mode=signup"
-              className="
-                mt-8
-                inline-flex
-                items-center
-                gap-2
-                rounded-xl
-                bg-white
-                px-6
-                py-3.5
-                text-sm
-                font-semibold
-                text-indigo-700
-                shadow-lg
-                transition
-                hover:scale-[1.02]
-              "
-            >
-              Get started free
-              <ArrowRight size={16} />
-            </Link>
-
+      <section id="workflow" className="border-y border-border bg-secondary/65">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:py-28">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">A simple workflow</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">Start with a thought. Build from there.</h2>
+            <p className="mt-6 max-w-md leading-7 text-muted-foreground">WhizBoard gives your team a common place to explore, refine, and share what comes next.</p>
           </div>
-
+          <div className="border-t border-border">
+            {[
+              ["01", "Create a board", "Open a fresh canvas for a project, meeting, or new idea."],
+              ["02", "Make it visual", "Add notes, draw connections, or ask AI to draft a diagram."],
+              ["03", "Bring people in", "Share the board and keep moving together."],
+            ].map(([number, title, description]) => (
+              <div key={number} className="grid grid-cols-[48px_1fr] gap-4 border-b border-border py-6 sm:grid-cols-[70px_1fr]">
+                <span className="pt-1 text-sm tabular-nums text-primary">{number}</span>
+                <div><h3 className="text-lg font-semibold">{title}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p></div>
+              </div>
+            ))}
+          </div>
         </div>
-
       </section>
 
-
-      {/* =====================================================
-          FOOTER
-      ===================================================== */}
-
-      <footer className="border-t border-border bg-background">
-
-        <div className="
-          mx-auto
-          flex
-          max-w-7xl
-          flex-col
-          gap-3
-          px-6
-          py-8
-          text-sm
-          text-muted-foreground
-          sm:flex-row
-          sm:items-center
-          sm:justify-between
-        ">
-
-          <Link
-            href="/"
-            className="flex items-center gap-2"
-          >
-            <Image
-              src="/logo.svg"
-              alt="WhizBoard"
-              width={25}
-              height={25}
-            />
-
-            <span className="font-semibold text-foreground">
-              WhizBoard
-            </span>
-          </Link>
-
-          <p>
-            Create. Collaborate. Visualize.
-          </p>
-
+      <section className="mx-auto flex max-w-7xl flex-col items-start gap-8 px-5 py-20 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:py-28">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Ready when you are</p>
+          <h2 className="mt-4 max-w-2xl text-4xl font-semibold leading-tight tracking-[-0.045em] sm:text-5xl">Make space for your next big idea.</h2>
         </div>
+        <Link href="/auth?mode=signup" className="inline-flex shrink-0 items-center gap-3 rounded-md bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">Get started <ArrowRight size={16} /></Link>
+      </section>
 
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-7 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <div className="flex items-center gap-2 text-foreground"><Image src="/logo.svg" alt="" width={25} height={25} /><span className="font-semibold">WhizBoard</span></div>
+          <span>Ideas are better when they have room to grow.</span>
+        </div>
       </footer>
-
     </main>
-  )
-}
-
-
-/* =========================================================
-   SMALL COMPONENTS
-========================================================= */
-
-function MiniCheck({
-  text,
-}: {
-  text: string
-}) {
-  return (
-    <div className="flex items-center gap-2 text-xs text-foreground">
-
-      <span className="
-        flex
-        h-5
-        w-5
-        items-center
-        justify-center
-        rounded-full
-        bg-emerald-100
-        text-emerald-600
-      ">
-        <Check size={11} />
-      </span>
-
-      {text}
-
-    </div>
-  )
-}
-
-
-function CheckItem({
-  text,
-}: {
-  text: string
-}) {
-  return (
-    <div className="flex items-center gap-3 text-sm text-foreground">
-
-      <span className="
-        flex
-        h-6
-        w-6
-        items-center
-        justify-center
-        rounded-full
-        bg-emerald-100
-        text-emerald-600
-      ">
-        <Check size={13} />
-      </span>
-
-      {text}
-
-    </div>
-  )
-}
-
-
-function FeatureCard({
-  icon,
-  iconClass,
-  title,
-  description,
-}: {
-  icon: React.ReactNode
-  iconClass: string
-  title: string
-  description: string
-}) {
-  return (
-    <div className="
-      rounded-2xl
-      border
-      border-border
-      bg-background
-      p-6
-      shadow-sm
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-    ">
-
-      <div className={`
-        flex
-        h-10
-        w-10
-        items-center
-        justify-center
-        rounded-xl
-        ${iconClass}
-      `}>
-        {icon}
-      </div>
-
-      <h3 className="mt-5 text-sm font-semibold">
-        {title}
-      </h3>
-
-      <p className="
-        mt-2
-        text-sm
-        leading-6
-        text-muted-foreground
-      ">
-        {description}
-      </p>
-
-    </div>
-  )
-}
-
-
-function Step({
-  number,
-  title,
-  description,
-  gradient,
-}: {
-  number: string
-  title: string
-  description: string
-  gradient: string
-}) {
-  return (
-    <div className="
-      rounded-2xl
-      border
-      border-border
-      bg-background
-      p-7
-      shadow-sm
-    ">
-
-      <div className={`
-        flex
-        h-10
-        w-10
-        items-center
-        justify-center
-        rounded-xl
-        bg-gradient-to-br
-        ${gradient}
-        text-xs
-        font-bold
-        text-white
-      `}>
-        {number}
-      </div>
-
-      <h3 className="mt-6 text-base font-semibold">
-        {title}
-      </h3>
-
-      <p className="
-        mt-2
-        text-sm
-        leading-6
-        text-muted-foreground
-      ">
-        {description}
-      </p>
-
-    </div>
-  )
-}
-
-
-/* =========================================================
-   DIAGRAM
-========================================================= */
-
-function DiagramNode({
-  className,
-  color,
-  title,
-  subtitle,
-}: {
-  className: string
-  color: "blue" | "violet" | "cyan" | "green" | "orange"
-  title: string
-  subtitle: string
-}) {
-  const styles = {
-    blue: "border-blue-200 bg-blue-50",
-    violet: "border-violet-200 bg-violet-50",
-    cyan: "border-cyan-200 bg-cyan-50",
-    green: "border-emerald-200 bg-emerald-50",
-    orange: "border-orange-200 bg-orange-50",
-  }
-
-  const dots = {
-    blue: "bg-primary",
-    violet: "bg-violet-500",
-    cyan: "bg-cyan-500",
-    green: "bg-emerald-500",
-    orange: "bg-orange-500",
-  }
-
-  return (
-    <div className={`absolute ${className}`}>
-
-      <div className={`
-        min-w-[120px]
-        rounded-xl
-        border
-        px-4
-        py-3
-        shadow-sm
-        ${styles[color]}
-      `}>
-
-        <div className="flex items-center gap-2">
-
-          <span className={`
-            h-2.5
-            w-2.5
-            rounded-full
-            ${dots[color]}
-          `} />
-
-          <span className="text-xs font-semibold text-slate-900">
-            {title}
-          </span>
-
-        </div>
-
-        <p className="mt-1 text-[10px] text-muted-foreground">
-          {subtitle}
-        </p>
-
-      </div>
-
-    </div>
-  )
-}
-
-
-function DiagramArrow({
-  className,
-  vertical = false,
-}: {
-  className: string
-  vertical?: boolean
-}) {
-  return (
-    <div
-      className={`
-        absolute
-        bg-slate-300
-        ${vertical ? "h-[72px] w-px" : "h-px"}
-        ${className}
-      `}
-    />
-  )
-}
-
-
-function ToolIcon({
-  icon,
-  active = false,
-}: {
-  icon: React.ReactNode
-  active?: boolean
-}) {
-  return (
-    <div className={`
-      flex
-      h-9
-      w-9
-      items-center
-      justify-center
-      rounded-lg
-      ${
-        active
-          ? "bg-indigo-100 text-indigo-700"
-          : "text-muted-foreground hover:bg-muted"
-      }
-    `}>
-      {icon}
-    </div>
   )
 }

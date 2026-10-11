@@ -718,14 +718,14 @@ const AISidebar = ({ excalidrawApi, onClose }: Props) => {
 };
 
     return (
-        <div className="absolute right-6 bottom-24 z-50 flex w-95 max-h-155 flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
+        <div className="absolute right-6 bottom-24 z-50 flex w-95 max-h-155 flex-col overflow-hidden rounded-lg border border-border bg-background shadow-[0_18px_55px_-25px_rgba(23,34,44,.35)]">
 
             {/* Header */}
             <div className="border-b border-border px-5 py-4">
                 <div className="flex items-start justify-between">
                     <div>
                         <div className="flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-primary">
                                 <Sparkles size={17} />
                             </div>
 
@@ -914,15 +914,13 @@ const AISidebar = ({ excalidrawApi, onClose }: Props) => {
                                 h-8
                                 shrink-0
                                 gap-1.5
-                                rounded-lg
+                                rounded-md
                                 px-3
                                 text-xs
                                 font-medium
-                                bg-gradient-to-r
-                                from-blue-600
-                                to-purple-600
-                                text-white
-                                hover:opacity-90
+                                bg-primary
+                                text-primary-foreground
+                                hover:bg-primary/90
                                 disabled:cursor-not-allowed
                                 disabled:opacity-50
                             "

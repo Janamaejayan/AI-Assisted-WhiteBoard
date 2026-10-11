@@ -149,15 +149,15 @@ const ProjectList = () => {
 
                 /* ================= BOARD SECTION ================= */
 
-                <section className="mt-10">
+                <section className="mt-9">
 
                     {/* Section Header */}
 
                     <div className="mb-6 flex items-end justify-between">
 
                         <div>
-                            <h2 className="text-2xl font-bold tracking-tight">
-                                Your Boards
+                            <h2 className="text-xl font-semibold tracking-tight">
+                                Your boards
                             </h2>
 
                             <p className="mt-1 text-sm text-muted-foreground">
@@ -177,7 +177,7 @@ const ProjectList = () => {
 
                     {/* Board Grid */}
 
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
                         {projectList.map((project) => (
 
@@ -188,15 +188,15 @@ const ProjectList = () => {
                                     group
                                     block
                                     overflow-hidden
-                                    rounded-2xl
+                                    rounded-lg
                                     border
                                     bg-card
                                     text-card-foreground
-                                    shadow-sm
+                                    shadow-none
                                     transition-all
                                     duration-200
-                                    hover:-translate-y-1
-                                    hover:shadow-md
+                                    hover:border-primary/40
+                                    hover:shadow-sm
                                     focus:outline-none
                                     focus:ring-2
                                     focus:ring-primary
@@ -219,7 +219,7 @@ const ProjectList = () => {
                                                 object-cover
                                                 transition-transform
                                                 duration-300
-                                                group-hover:scale-105
+                                                group-hover:scale-[1.02]
                                             "
                                         />
 
@@ -233,7 +233,7 @@ const ProjectList = () => {
                                                 w-12
                                                 items-center
                                                 justify-center
-                                                rounded-xl
+                                                rounded-md
                                                 bg-background
                                                 shadow-sm
                                             ">

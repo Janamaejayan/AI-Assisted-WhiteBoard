@@ -14,11 +14,12 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 
-import { useUser } from "@clerk/nextjs"
+import { useClerk, useUser } from "@clerk/nextjs"
 
 import {
   Archive,
   LayoutGrid,
+  LogOut,
   Settings,
   Sparkles,
   Users2Icon,
@@ -40,6 +41,7 @@ export function AppSidebar() {
   const router = useRouter()
 
   const { user } = useUser()
+  const { signOut } = useClerk()
   const { userDetail } = useContext(UserDetailContext)
 
   const [settingsOpen, setSettingsOpen] =
@@ -83,16 +85,16 @@ export function AppSidebar() {
 
       <SidebarHeader>
 
-        <div className="flex items-center gap-2 p-4">
+        <div className="flex items-center gap-2.5 border-b border-sidebar-border px-3 py-5">
 
           <Image
             src="/logo.svg"
             alt="Logo"
-            width={40}
-            height={40}
+            width={31}
+            height={31}
           />
 
-          <h2 className="text-xl font-bold">
+          <h2 className="text-[17px] font-semibold tracking-tight">
             WhizBoard
           </h2>
 
@@ -109,15 +111,15 @@ export function AppSidebar() {
 
           <CreateNewBoardDialogue />
 
-          <SidebarGroupLabel className="mt-5">
-            <h1>My boards</h1>
+          <SidebarGroupLabel className="mt-7 text-[11px] font-semibold uppercase tracking-[0.13em]">
+            <h1>Workspace</h1>
           </SidebarGroupLabel>
 
 
           {/* ALL FILES */}
 
           <SidebarMenuButton
-            className="p-5 mt-2"
+            className="mt-1 h-10 rounded-md px-3 text-sm"
             isActive={path === "/dashboard"}
             onClick={() =>
               router.push("/dashboard")
@@ -127,7 +129,7 @@ export function AppSidebar() {
             <LayoutGrid />
 
             <span>
-              All Files
+              All boards
             </span>
 
           </SidebarMenuButton>
@@ -136,7 +138,7 @@ export function AppSidebar() {
           {/* SHARED */}
 
           <SidebarMenuButton
-            className="p-5 mt-2"
+            className="mt-1 h-10 rounded-md px-3 text-sm"
             isActive={path === "/shared-files"}
             onClick={() =>
               router.push("/shared-files")
@@ -155,7 +157,7 @@ export function AppSidebar() {
           {/* ARCHIVE */}
 
           <SidebarMenuButton
-            className="p-5 mt-2"
+            className="mt-1 h-10 rounded-md px-3 text-sm"
             isActive={path === "/archived"}
             onClick={() =>
               router.push("/archived")
@@ -177,15 +179,15 @@ export function AppSidebar() {
 
         <SidebarGroup>
 
-          <SidebarGroupLabel className="mt-5">
-            <h1>Others</h1>
+          <SidebarGroupLabel className="mt-5 text-[11px] font-semibold uppercase tracking-[0.13em]">
+            <h1>Tools</h1>
           </SidebarGroupLabel>
 
 
           {/* AI HELPER */}
 
           <SidebarMenuButton
-            className="p-5"
+            className="h-10 rounded-md px-3 text-sm"
             isActive={aiDialogOpen}
             onClick={() => setAiDialogOpen(true)}
           >
@@ -202,7 +204,7 @@ export function AppSidebar() {
           {/* SETTINGS */}
 
           <SidebarMenuButton
-            className="p-5"
+            className="h-10 rounded-md px-3 text-sm"
             isActive={settingsOpen}
             onClick={() =>
               setSettingsOpen((prev) => !prev)
@@ -233,7 +235,7 @@ export function AppSidebar() {
       <SidebarFooter>
         {/* STORAGE */}
 
-        <div className="my-2 rounded-xl border bg-sidebar-accent/30 p-4">
+        <div className="my-2 border-t border-sidebar-border px-2 py-4">
 
           <h2 className="mb-1 flex justify-between gap-2 text-xs font-medium text-sidebar-foreground">
 
@@ -251,7 +253,7 @@ export function AppSidebar() {
             value={fileSummary?.total && fileSummary.total > 0
               ? Math.min(100, (fileSummary.count / fileSummary.total) * 100)
               : 0}
-            className="h-2 mt-2"
+            className="mt-3 h-1"
           />
 
         </div>
@@ -259,7 +261,7 @@ export function AppSidebar() {
 
         {/* USER */}
 
-        <div className="flex items-center gap-3 rounded-xl border p-3">
+        <div className="flex items-center gap-3 border-t border-sidebar-border px-2 py-4">
 
           <Image
             src={
@@ -285,6 +287,14 @@ export function AppSidebar() {
           </div>
 
         </div>
+
+        <SidebarMenuButton
+          className="h-10 rounded-md px-3 text-sm text-muted-foreground hover:text-foreground"
+          onClick={() => signOut({ redirectUrl: "/" })}
+        >
+          <LogOut />
+          <span>Log out</span>
+        </SidebarMenuButton>
 
       </SidebarFooter>
 

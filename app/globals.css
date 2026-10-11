@@ -98,86 +98,87 @@
   color-scheme: light;
 
   /* Main background */
-  --background: #fcfcfd;
-  --foreground: #111827;
+  --background: #faf9f6;
+  --foreground: #202b33;
 
   /* Cards */
   --card: #ffffff;
-  --card-foreground: #111827;
+  --card-foreground: #202b33;
 
   /* Popovers / dropdowns */
   --popover: #ffffff;
-  --popover-foreground: #111827;
+  --popover-foreground: #202b33;
 
   /* Primary Whizboard Blue */
-  --primary: #2f6bff;
+  --primary: #254e58;
   --primary-foreground: #ffffff;
 
   /* Secondary */
-  --secondary: #f6f7fb;
-  --secondary-foreground: #111827;
+  --secondary: #f2f0eb;
+  --secondary-foreground: #202b33;
 
   /* Muted */
-  --muted: #f5f7fb;
-  --muted-foreground: #667085;
+  --muted: #f2f0eb;
+  --muted-foreground: #657078;
 
   /* Active / selected state */
-  --accent: #eef4ff;
-  --accent-foreground: #2f6bff;
+  --accent: #e9efed;
+  --accent-foreground: #254e58;
 
   /* Destructive */
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
   /* Custom colors */
-  --purple: #8b5cf6;
-  --success: #34a853;
-  --warning: #f59e0b;
-  --info: #2f6bff;
+  --purple: #807083;
+  --success: #4d8069;
+  --warning: #aa7b43;
+  --info: #547781;
 
   /* Borders */
-  --border: #e8eaf0;
-  --input: #e8eaf0;
-  --ring: #2f6bff;
+  --border: #dedfda;
+  --input: #d6d9d4;
+  --ring: #527a80;
+  --canvas-dot: #d9dcd8;
 
   /* Radius */
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
   /* Charts */
-  --chart-1: #2f6bff;
-  --chart-2: #8b5cf6;
-  --chart-3: #34a853;
-  --chart-4: #f59e0b;
-  --chart-5: #fbbf24;
+  --chart-1: #254e58;
+  --chart-2: #887665;
+  --chart-3: #4d8069;
+  --chart-4: #aa7b43;
+  --chart-5: #8a6d80;
 
   /* Sidebar */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #111827;
+  --sidebar: #f5f4f0;
+  --sidebar-foreground: #202b33;
 
-  --sidebar-primary: #2f6bff;
+  --sidebar-primary: #254e58;
   --sidebar-primary-foreground: #ffffff;
 
   /* Active sidebar item */
-  --sidebar-accent: #eef4ff;
-  --sidebar-accent-foreground: #2f6bff;
+  --sidebar-accent: #e5ebe8;
+  --sidebar-accent-foreground: #254e58;
 
-  --sidebar-border: #e8eaf0;
-  --sidebar-ring: #2f6bff;
+  --sidebar-border: #dedfda;
+  --sidebar-ring: #527a80;
 
   /* =======================================================
      WHIZBOARD CUSTOM SURFACE COLORS
   ======================================================= */
 
-  --ai-soft: #f3efff;
-  --success-soft: #eaf8ec;
-  --warning-soft: #fff4df;
-  --info-soft: #eef4ff;
-  --pink-soft: #feeff6;
+  --ai-soft: #eeeae8;
+  --success-soft: #e7f0e9;
+  --warning-soft: #f4eee4;
+  --info-soft: #e8efee;
+  --pink-soft: #f4ecec;
 
   /* Hero */
-  --hero-start: #eef5ff;
-  --hero-middle: #f5f7ff;
-  --hero-end: #f8f0ff;
+  --hero-start: #f4f3ef;
+  --hero-middle: #f8f7f4;
+  --hero-end: #efefea;
 }
 
 /* =========================================================
@@ -188,32 +189,32 @@
   color-scheme: dark;
 
   /* Main background */
-  --background: #0b1020;
-  --foreground: #f8fafc;
+  --background: #171d20;
+  --foreground: #e8eeec;
 
   /* Cards */
-  --card: #111827;
-  --card-foreground: #f8fafc;
+  --card: #20282b;
+  --card-foreground: #e8eeec;
 
   /* Popovers / dropdowns */
-  --popover: #111827;
-  --popover-foreground: #f8fafc;
+  --popover: #20282b;
+  --popover-foreground: #e8eeec;
 
   /* Primary */
-  --primary: #6d8dff;
-  --primary-foreground: #0b1020;
+  --primary: #a5c8c5;
+  --primary-foreground: #172426;
 
   /* Secondary */
-  --secondary: #1a2235;
-  --secondary-foreground: #f8fafc;
+  --secondary: #252e30;
+  --secondary-foreground: #e8eeec;
 
   /* Muted */
-  --muted: #1a2235;
-  --muted-foreground: #98a2b3;
+  --muted: #252e30;
+  --muted-foreground: #a5b0ae;
 
   /* Active / selected state */
-  --accent: #172554;
-  --accent-foreground: #a9baff;
+  --accent: #2b3b3d;
+  --accent-foreground: #b6d3cf;
 
   /* Destructive */
   --destructive: #ef4444;
@@ -226,9 +227,10 @@
   --info: #60a5fa;
 
   /* Borders */
-  --border: #263044;
-  --input: #263044;
-  --ring: #6d8dff;
+  --border: #394244;
+  --input: #465153;
+  --ring: #a5c8c5;
+  --canvas-dot: #3d4748;
 
   /* Charts */
   --chart-1: #6d8dff;
@@ -238,17 +240,17 @@
   --chart-5: #facc15;
 
   /* Sidebar */
-  --sidebar: #111827;
-  --sidebar-foreground: #f8fafc;
+  --sidebar: #1c2426;
+  --sidebar-foreground: #e8eeec;
 
-  --sidebar-primary: #6d8dff;
-  --sidebar-primary-foreground: #0b1020;
+  --sidebar-primary: #a5c8c5;
+  --sidebar-primary-foreground: #172426;
 
-  --sidebar-accent: #172554;
-  --sidebar-accent-foreground: #a9baff;
+  --sidebar-accent: #2b3b3d;
+  --sidebar-accent-foreground: #b6d3cf;
 
-  --sidebar-border: #263044;
-  --sidebar-ring: #6d8dff;
+  --sidebar-border: #394244;
+  --sidebar-ring: #a5c8c5;
 
   /* =======================================================
      WHIZBOARD DARK SURFACE COLORS
@@ -261,9 +263,9 @@
   --pink-soft: #2b1824;
 
   /* Hero */
-  --hero-start: #101a35;
-  --hero-middle: #141a31;
-  --hero-end: #211a38;
+  --hero-start: #202a2b;
+  --hero-middle: #1c2527;
+  --hero-end: #252b29;
 }
 
 /* =========================================================
@@ -301,19 +303,11 @@
   ======================================================= */
 
   .bg-brand-gradient {
-    background: linear-gradient(
-      90deg,
-      #2f6bff 0%,
-      #8b5cf6 100%
-    );
+    background: var(--primary);
   }
 
   .bg-brand-gradient-hover {
-    background: linear-gradient(
-      90deg,
-      #2457e6 0%,
-      #7c3aed 100%
-    );
+    background: color-mix(in srgb, var(--primary), black 10%);
   }
 
   /* =======================================================
@@ -375,14 +369,14 @@
 
   .shadow-whizboard {
     box-shadow:
-      0 1px 2px rgb(16 24 40 / 0.03),
-      0 4px 12px rgb(16 24 40 / 0.05);
+      0 1px 2px rgb(16 24 40 / 0.025),
+      0 5px 18px rgb(16 24 40 / 0.035);
   }
 
   .shadow-whizboard-hover {
     box-shadow:
-      0 4px 8px rgb(16 24 40 / 0.05),
-      0 12px 28px rgb(16 24 40 / 0.08);
+      0 4px 12px rgb(16 24 40 / 0.04),
+      0 14px 30px rgb(16 24 40 / 0.06);
   }
 }
 

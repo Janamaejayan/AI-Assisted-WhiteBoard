@@ -938,27 +938,12 @@ export default function AuthForm({
       <div className="
         relative
         overflow-hidden
-        rounded-3xl
+        rounded-md
         border
-        border-indigo-100 dark:border-border
+        border-border
         bg-background
-        shadow-[0_25px_80px_rgba(79,70,229,0.14)]
+        shadow-[0_18px_55px_-35px_rgba(23,34,44,0.3)]
       ">
-
-        {/* Top gradient line */}
-
-        <div className="
-          absolute
-          left-0
-          right-0
-          top-0
-          h-1
-          bg-gradient-to-r
-          from-indigo-500
-          via-violet-500
-          to-cyan-400
-        " />
-
 
         {/* =================================================
             HEADER
@@ -974,13 +959,9 @@ export default function AuthForm({
               w-10
               items-center
               justify-center
-              rounded-xl
-              bg-gradient-to-br
-              from-indigo-500
-              to-violet-600
-              text-white
-              shadow-lg
-              shadow-indigo-500/20
+              rounded-md
+              bg-accent
+              text-primary
             ">
               <Sparkles size={18} />
             </div>
@@ -992,7 +973,7 @@ export default function AuthForm({
                 font-semibold
                 uppercase
                 tracking-wider
-                text-indigo-600 dark:text-indigo-300
+                text-primary
               ">
                 WhizBoard
               </p>
@@ -1073,8 +1054,8 @@ export default function AuthForm({
               mb-6
               grid
               grid-cols-2
-              rounded-xl
-              bg-indigo-50 dark:bg-primary/10
+              rounded-md
+              bg-accent
               p-1
             ">
 
@@ -1143,7 +1124,7 @@ export default function AuthForm({
                 font-medium
                 text-muted-foreground
                 transition
-                hover:text-indigo-600 dark:hover:text-indigo-300
+                hover:text-primary
               "
             >
               <ArrowLeft size={14} />
@@ -1274,7 +1255,7 @@ export default function AuthForm({
                       className="
                         h-12
                         w-full
-                        rounded-xl
+                        rounded-md
                         border
                         border-border
                         bg-background
@@ -1286,9 +1267,9 @@ export default function AuthForm({
                         transition
                         placeholder:text-muted-foreground
                         hover:border-border
-                        focus:border-indigo-400
+                        focus:border-ring
                         focus:ring-4
-                        focus:ring-indigo-100
+                        focus:ring-ring/20
                       "
                     />
 
@@ -1334,9 +1315,9 @@ export default function AuthForm({
                         className="
                           text-xs
                           font-medium
-                          text-indigo-600 dark:text-indigo-300
+                          text-primary
                           transition
-                          hover:text-violet-600 dark:hover:text-violet-300
+                          hover:text-primary
                         "
                       >
                         Forgot password?
@@ -1383,7 +1364,7 @@ export default function AuthForm({
                       className="
                         h-12
                         w-full
-                        rounded-xl
+                        rounded-md
                         border
                         border-border
                         bg-background
@@ -1395,9 +1376,9 @@ export default function AuthForm({
                         transition
                         placeholder:text-muted-foreground
                         hover:border-border
-                        focus:border-indigo-400
+                        focus:border-ring
                         focus:ring-4
-                        focus:ring-indigo-100
+                        focus:ring-ring/20
                       "
                     />
 
@@ -1491,7 +1472,7 @@ export default function AuthForm({
                         className="
                           h-12
                           w-full
-                          rounded-xl
+                          rounded-md
                           border
                           border-border
                           bg-background
@@ -1503,9 +1484,9 @@ export default function AuthForm({
                           transition
                           placeholder:text-muted-foreground
                           hover:border-border
-                          focus:border-violet-400
+                          focus:border-ring
                           focus:ring-4
-                          focus:ring-violet-100
+                          focus:ring-ring/20
                         "
                       />
 
@@ -1581,20 +1562,20 @@ export default function AuthForm({
                     items-center
                     justify-center
                     gap-2
-                    rounded-xl
-                    bg-gradient-to-r
-                    from-indigo-600
-                    via-violet-600
-                    to-violet-600
+                    rounded-md
+                    bg-primary
+
+
+
                     text-sm
                     font-semibold
-                    text-white
-                    shadow-lg
-                    shadow-indigo-500/20
+                    text-primary-foreground
+
+
                     transition
-                    hover:-translate-y-0.5
-                    hover:shadow-xl
-                    hover:shadow-indigo-500/25
+
+
+
                     disabled:cursor-not-allowed
                     disabled:opacity-60
                   "
@@ -1681,7 +1662,7 @@ export default function AuthForm({
                   className="
                     h-12
                     w-full
-                    rounded-xl
+                    rounded-md
                     border
                     border-border
                     bg-background
@@ -1694,9 +1675,9 @@ export default function AuthForm({
                     transition
                     placeholder:text-muted-foreground
                     placeholder:tracking-normal
-                    focus:border-indigo-400
+                    focus:border-ring
                     focus:ring-4
-                    focus:ring-indigo-100
+                    focus:ring-ring/20
                   "
                 />
 
@@ -1731,17 +1712,17 @@ export default function AuthForm({
                   items-center
                   justify-center
                   gap-2
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-indigo-600
-                  to-violet-600
+                  rounded-md
+                  bg-primary
+
+
                   text-sm
                   font-semibold
-                  text-white
-                  shadow-lg
-                  shadow-indigo-500/20
+                  text-primary-foreground
+
+
                   transition
-                  hover:-translate-y-0.5
+
                   disabled:opacity-60
                 "
               >
@@ -1772,8 +1753,8 @@ export default function AuthForm({
                   w-full
                   text-xs
                   font-semibold
-                  text-indigo-600 dark:text-indigo-300
-                  hover:text-violet-600 dark:hover:text-violet-300
+                  text-primary
+                  hover:text-primary
                   disabled:opacity-50
                 "
               >
@@ -1841,7 +1822,7 @@ export default function AuthForm({
                     className="
                       h-12
                       w-full
-                      rounded-xl
+                      rounded-md
                       border
                       border-border
                       bg-background
@@ -1851,9 +1832,9 @@ export default function AuthForm({
                       outline-none
                       transition
                       placeholder:text-muted-foreground
-                      focus:border-indigo-400
+                      focus:border-ring
                       focus:ring-4
-                      focus:ring-indigo-100
+                      focus:ring-ring/20
                     "
                   />
 
@@ -1890,15 +1871,15 @@ export default function AuthForm({
                   items-center
                   justify-center
                   gap-2
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-indigo-600
-                  to-violet-600
+                  rounded-md
+                  bg-primary
+
+
                   text-sm
                   font-semibold
-                  text-white
-                  shadow-lg
-                  shadow-indigo-500/20
+                  text-primary-foreground
+
+
                   disabled:opacity-60
                 "
               >
@@ -1963,7 +1944,7 @@ export default function AuthForm({
                   className="
                     h-12
                     w-full
-                    rounded-xl
+                    rounded-md
                     border
                     border-border
                     px-4
@@ -1974,9 +1955,9 @@ export default function AuthForm({
                     outline-none
                     placeholder:text-muted-foreground
                     placeholder:tracking-normal
-                    focus:border-indigo-400
+                    focus:border-ring
                     focus:ring-4
-                    focus:ring-indigo-100
+                    focus:ring-ring/20
                   "
                 />
 
@@ -2011,15 +1992,15 @@ export default function AuthForm({
                   items-center
                   justify-center
                   gap-2
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-indigo-600
-                  to-violet-600
+                  rounded-md
+                  bg-primary
+
+
                   text-sm
                   font-semibold
-                  text-white
-                  shadow-lg
-                  shadow-indigo-500/20
+                  text-primary-foreground
+
+
                   disabled:opacity-60
                 "
               >
@@ -2101,15 +2082,15 @@ export default function AuthForm({
                     className="
                       h-12
                       w-full
-                      rounded-xl
+                      rounded-md
                       border
                       border-border
                       pl-10
                       pr-11
                       outline-none
-                      focus:border-indigo-400
+                      focus:border-ring
                       focus:ring-4
-                      focus:ring-indigo-100
+                      focus:ring-ring/20
                     "
                   />
 
@@ -2177,14 +2158,14 @@ export default function AuthForm({
                   className="
                     h-12
                     w-full
-                    rounded-xl
+                    rounded-md
                     border
                     border-border
                     px-3
                     outline-none
-                    focus:border-indigo-400
+                    focus:border-ring
                     focus:ring-4
-                    focus:ring-indigo-100
+                    focus:ring-ring/20
                   "
                 />
 
@@ -2213,15 +2194,15 @@ export default function AuthForm({
                   items-center
                   justify-center
                   gap-2
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-indigo-600
-                  to-violet-600
+                  rounded-md
+                  bg-primary
+
+
                   text-sm
                   font-semibold
-                  text-white
-                  shadow-lg
-                  shadow-indigo-500/20
+                  text-primary-foreground
+
+
                   disabled:opacity-60
                 "
               >
@@ -2295,7 +2276,7 @@ function OAuthButton({
         items-center
         justify-center
         gap-2.5
-        rounded-xl
+        rounded-md
         border
         border-border
         bg-background
@@ -2304,10 +2285,10 @@ function OAuthButton({
         text-foreground
         shadow-sm
         transition
-        hover:-translate-y-0.5
-        hover:border-indigo-200
-        hover:bg-indigo-50 dark:hover:bg-primary/10
-        hover:text-indigo-700 dark:hover:text-primary
+
+        hover:border-primary/30
+        hover:bg-accent
+        hover:text-primary
         disabled:cursor-not-allowed
         disabled:opacity-60
       "
@@ -2335,7 +2316,7 @@ function MessageBox({
   return (
     <div
       className={`
-        rounded-xl
+        rounded-md
         border
         px-3
         py-2.5
