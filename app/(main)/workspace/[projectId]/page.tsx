@@ -16,6 +16,8 @@ const WorkSpace = () => {
   const [activeTab, setActiveTab] = useState('whiteboard')
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null)
   const [projectName, setProjectName] = useState("");
+  const [access, setAccess] = useState<'owner' | 'edit' | 'view' | null>(null)
+  const [loadError, setLoadError] = useState(false)
 
   const { projectId } = useParams()
 
@@ -34,6 +36,8 @@ const WorkSpace = () => {
     )
     
     setProjectName(result?.data?.projectName)
+    setAccess(result?.data?.access ?? null)
+    setLoadError(false)
 
     const {
       elements = [],
@@ -70,6 +74,7 @@ const WorkSpace = () => {
     console.log('Whiteboard loaded successfully')
 
   } catch (error) {
+    setLoadError(true)
     console.error(
       'Failed to load whiteboard data:',
       error
@@ -98,7 +103,11 @@ const WorkSpace = () => {
 
       const link = document.createElement('a')
       link.href = url
-      link.download = 'whiteboard.png'
+      const safeName = projectName
+        .trim()
+        .replace(/[\\/:*?"<>|\u0000-\u001f]/g, '-')
+        .replace(/[. ]+$/, '')
+      link.download = `${safeName || 'whiteboard'}.png`
 
       document.body.appendChild(link)
       link.click()
@@ -110,17 +119,24 @@ const WorkSpace = () => {
     }
   }
 
+  if (loadError) {
+    return <div className="p-8 text-center">This workspace is unavailable or has not been shared with your signed-in email.</div>
+  }
+
   return (
     <div>
       <Header
         selectedTab={setActiveTab}
         onExport={handleImage}
         projectName = {projectName}
+        projectId={String(projectId)}
+        access={access}
       />
 
       {activeTab === 'whiteboard' ? (
         <WhiteBoard
           onApiReady={(api) => setApi(api)}
+          access={access}
         />
       ) : (
         <SmartDoc />

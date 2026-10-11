@@ -2,19 +2,38 @@ import { db, WhiteBoardData } from "@/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
+import { getProjectAccess } from "@/lib/projectAccess";
 
 
 export async function POST (req : NextRequest){
-    const {projectId, elements, files, appState, base64ImagePreview} = await req.json();
+    const {projectId, elements, files, appState, base64ImagePreview, previewOnly} = await req.json();
     const user = await currentUser();
 
-    if (!user){
-        return NextResponse.json("Unauthorized user");
+    const email = user?.primaryEmailAddress?.emailAddress;
+    if (!email) {
+        return NextResponse.json({ error: "Unauthorized user" }, { status: 401 });
     }
 
-    if (projectId){
+    if (!projectId) {
+        return NextResponse.json({ error: "Project info missing" }, { status: 400 });
+    }
 
-        try{
+    const access = await getProjectAccess(projectId, email);
+    if (access !== 'owner' && access !== 'edit') {
+        return NextResponse.json({ error: "Edit access required" }, { status: 403 });
+    }
+
+    try {
+            if (previewOnly === true) {
+                await db.insert(WhiteBoardData).values({
+                    projectId,
+                    previewImage: base64ImagePreview,
+                }).onConflictDoUpdate({
+                    target: WhiteBoardData.projectId,
+                    set: { previewImage: base64ImagePreview, updatedAt: new Date() },
+                });
+                return NextResponse.json({ success: true });
+            }
 
             const result = await db.insert(WhiteBoardData).values({
                 projectId : projectId,
@@ -34,18 +53,19 @@ export async function POST (req : NextRequest){
             });
             
             return NextResponse.json(result);
-        }catch(e){
-            return NextResponse.json('Project info missing');
-        }
-
+    } catch (error) {
+        console.error('Failed to save whiteboard:', error);
+        return NextResponse.json({ error: 'Failed to save whiteboard' }, { status: 500 });
     }
+
 }
 
 export async function GET(req: NextRequest) {
 
     const user = await currentUser();
 
-    if (!user) {
+    const email = user?.primaryEmailAddress?.emailAddress;
+    if (!email) {
         return NextResponse.json(
             { error: "Unauthorized user" },
             { status: 401 }
@@ -60,6 +80,10 @@ export async function GET(req: NextRequest) {
             { error: "Project info missing" },
             { status: 400 }
         );
+    }
+
+    if (!await getProjectAccess(projectId, email)) {
+        return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const result = await db

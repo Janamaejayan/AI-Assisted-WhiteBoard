@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import axios from "axios"
+import { UserDetailContext } from "@/context/UserDetailContext"
 
 import {
   Sidebar,
@@ -38,9 +40,40 @@ export function AppSidebar() {
   const router = useRouter()
 
   const { user } = useUser()
+  const { userDetail } = useContext(UserDetailContext)
 
   const [settingsOpen, setSettingsOpen] =
     useState(false)
+  const [aiDialogOpen, setAiDialogOpen] = useState(false)
+  const [fileSummary, setFileSummary] = useState<{
+    count: number
+    total: number | null
+  } | null>(null)
+
+  useEffect(() => {
+    if (!userDetail?.id) return
+
+    let active = true
+    const loadSummary = async () => {
+      try {
+        const { data } = await axios.get<{
+          count: number
+          total: number | null
+        }>("/api/projects?summary=true")
+        if (active) setFileSummary(data)
+      } catch (error) {
+        console.error("Failed to load file count:", error)
+      }
+    }
+
+    loadSummary()
+    window.addEventListener("projects:changed", loadSummary)
+
+    return () => {
+      active = false
+      window.removeEventListener("projects:changed", loadSummary)
+    }
+  }, [userDetail?.id, path])
 
 
   return (
@@ -153,10 +186,8 @@ export function AppSidebar() {
 
           <SidebarMenuButton
             className="p-5"
-            isActive={path === "/AI"}
-            onClick={() =>
-              router.push("/AI")
-            }
+            isActive={aiDialogOpen}
+            onClick={() => setAiDialogOpen(true)}
           >
 
             <Sparkles />
@@ -200,28 +231,26 @@ export function AppSidebar() {
       {/* ================= FOOTER ================= */}
 
       <SidebarFooter>
-
-        <CreateNewBoardDialogue />
-
-
         {/* STORAGE */}
 
-        <div className="p-4 my-3 border rounded-md">
+        <div className="my-2 rounded-xl border bg-sidebar-accent/30 p-4">
 
-          <h2 className="text-sm flex justify-between mb-1">
+          <h2 className="mb-1 flex justify-between gap-2 text-xs font-medium text-sidebar-foreground">
 
             <span>
-              2 Files Created
+              Boards used
             </span>
 
             <span>
-              total 3
+              {fileSummary?.count ?? "—"} / {fileSummary?.total ?? "—"}
             </span>
 
           </h2>
 
           <Progress
-            value={66}
+            value={fileSummary?.total && fileSummary.total > 0
+              ? Math.min(100, (fileSummary.count / fileSummary.total) * 100)
+              : 0}
             className="h-2 mt-2"
           />
 
@@ -230,7 +259,7 @@ export function AppSidebar() {
 
         {/* USER */}
 
-        <div className="flex items-center gap-2 p-4 border rounded-md">
+        <div className="flex items-center gap-3 rounded-xl border p-3">
 
           <Image
             src={
@@ -267,6 +296,13 @@ export function AppSidebar() {
         onClose={() =>
           setSettingsOpen(false)
         }
+      />
+
+      <CreateNewBoardDialogue
+        open={aiDialogOpen}
+        onOpenChange={setAiDialogOpen}
+        openAiOnCreate
+        hideTrigger
       />
 
     </Sidebar>

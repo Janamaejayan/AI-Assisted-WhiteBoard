@@ -90,11 +90,13 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* =========================
+/* =========================================================
    LIGHT THEME
-   ========================= */
+========================================================= */
 
 :root {
+  color-scheme: light;
+
   /* Main background */
   --background: #fcfcfd;
   --foreground: #111827;
@@ -161,68 +163,112 @@
 
   --sidebar-border: #e8eaf0;
   --sidebar-ring: #2f6bff;
+
+  /* =======================================================
+     WHIZBOARD CUSTOM SURFACE COLORS
+  ======================================================= */
+
+  --ai-soft: #f3efff;
+  --success-soft: #eaf8ec;
+  --warning-soft: #fff4df;
+  --info-soft: #eef4ff;
+  --pink-soft: #feeff6;
+
+  /* Hero */
+  --hero-start: #eef5ff;
+  --hero-middle: #f5f7ff;
+  --hero-end: #f8f0ff;
 }
 
-/* =========================
+/* =========================================================
    DARK THEME
-   ========================= */
+========================================================= */
 
 .dark {
+  color-scheme: dark;
+
+  /* Main background */
   --background: #0b1020;
   --foreground: #f8fafc;
 
+  /* Cards */
   --card: #111827;
   --card-foreground: #f8fafc;
 
+  /* Popovers / dropdowns */
   --popover: #111827;
   --popover-foreground: #f8fafc;
 
-  --primary: #5b83ff;
-  --primary-foreground: #ffffff;
+  /* Primary */
+  --primary: #6d8dff;
+  --primary-foreground: #0b1020;
 
+  /* Secondary */
   --secondary: #1a2235;
   --secondary-foreground: #f8fafc;
 
+  /* Muted */
   --muted: #1a2235;
   --muted-foreground: #98a2b3;
 
+  /* Active / selected state */
   --accent: #172554;
-  --accent-foreground: #8eabff;
+  --accent-foreground: #a9baff;
 
+  /* Destructive */
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
+  /* Custom colors */
   --purple: #a78bfa;
   --success: #4ade80;
   --warning: #fbbf24;
   --info: #60a5fa;
 
+  /* Borders */
   --border: #263044;
   --input: #263044;
-  --ring: #5b83ff;
+  --ring: #6d8dff;
 
-  --chart-1: #5b83ff;
+  /* Charts */
+  --chart-1: #6d8dff;
   --chart-2: #a78bfa;
   --chart-3: #4ade80;
   --chart-4: #fb923c;
   --chart-5: #facc15;
 
+  /* Sidebar */
   --sidebar: #111827;
   --sidebar-foreground: #f8fafc;
 
-  --sidebar-primary: #5b83ff;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-primary: #6d8dff;
+  --sidebar-primary-foreground: #0b1020;
 
   --sidebar-accent: #172554;
-  --sidebar-accent-foreground: #8eabff;
+  --sidebar-accent-foreground: #a9baff;
 
   --sidebar-border: #263044;
-  --sidebar-ring: #5b83ff;
+  --sidebar-ring: #6d8dff;
+
+  /* =======================================================
+     WHIZBOARD DARK SURFACE COLORS
+  ======================================================= */
+
+  --ai-soft: #211b3a;
+  --success-soft: #12291b;
+  --warning-soft: #2b2110;
+  --info-soft: #152445;
+  --pink-soft: #2b1824;
+
+  /* Hero */
+  --hero-start: #101a35;
+  --hero-middle: #141a31;
+  --hero-end: #211a38;
 }
 
-/* =========================
+/* =========================================================
    BASE
-   ========================= */
+========================================================= */
 
 @layer base {
   * {
@@ -232,19 +278,28 @@
   html,
   body {
     font-family: var(--font-geist), sans-serif;
+    min-height: 100%;
+  }
+
+  html {
+    background: var(--background);
   }
 
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
   }
 }
 
-/* =========================
+/* =========================================================
    WHIZBOARD UTILITIES
-   ========================= */
+========================================================= */
 
 @layer utilities {
-  /* Main button */
+  /* =======================================================
+     BRAND GRADIENT
+  ======================================================= */
+
   .bg-brand-gradient {
     background: linear-gradient(
       90deg,
@@ -253,7 +308,6 @@
     );
   }
 
-  /* Main button hover */
   .bg-brand-gradient-hover {
     background: linear-gradient(
       90deg,
@@ -262,42 +316,63 @@
     );
   }
 
-  /* Dashboard hero */
+  /* =======================================================
+     HERO GRADIENT
+  ======================================================= */
+
   .bg-hero-gradient {
     background: linear-gradient(
       110deg,
-      #eef5ff 0%,
-      #f5f7ff 45%,
-      #f8f0ff 100%
+      var(--hero-start) 0%,
+      var(--hero-middle) 45%,
+      var(--hero-end) 100%
     );
   }
 
-  /* AI cards */
+  /* =======================================================
+     AI CARDS
+  ======================================================= */
+
   .bg-ai-soft {
-    background: #f3efff;
+    background: var(--ai-soft);
   }
 
-  /* Green cards */
+  /* =======================================================
+     SUCCESS CARDS
+  ======================================================= */
+
   .bg-success-soft {
-    background: #eaf8ec;
+    background: var(--success-soft);
   }
 
-  /* Orange cards */
+  /* =======================================================
+     WARNING CARDS
+  ======================================================= */
+
   .bg-warning-soft {
-    background: #fff4df;
+    background: var(--warning-soft);
   }
 
-  /* Blue cards */
+  /* =======================================================
+     INFO CARDS
+  ======================================================= */
+
   .bg-info-soft {
-    background: #eef4ff;
+    background: var(--info-soft);
   }
 
-  /* Light pink */
+  /* =======================================================
+     PINK CARDS
+  ======================================================= */
+
   .bg-pink-soft {
-    background: #feeff6;
+    background: var(--pink-soft);
   }
 
-  /* Card shadow */
+  /* =======================================================
+     SHADOWS
+  ======================================================= */
+
   .shadow-whizboard {
     box-shadow:
       0 1px 2px rgb(16 24 40 / 0.03),
@@ -308,5 +383,23 @@
     box-shadow:
       0 4px 8px rgb(16 24 40 / 0.05),
       0 12px 28px rgb(16 24 40 / 0.08);
+  }
+}
+
+/* =========================================================
+   DARK MODE UTILITY OVERRIDES
+========================================================= */
+
+.dark {
+  .shadow-whizboard {
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.20),
+      0 4px 14px rgb(0 0 0 / 0.22);
+  }
+
+  .shadow-whizboard-hover {
+    box-shadow:
+      0 4px 8px rgb(0 0 0 / 0.22),
+      0 12px 28px rgb(0 0 0 / 0.30);
   }
 }

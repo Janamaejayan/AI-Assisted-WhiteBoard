@@ -48,11 +48,23 @@ export type ConvertOptions = {
   offsetX?: number;
   offsetY?: number;
   idPrefix?: string;
+
+  /** Color used for strokes and generated text. */
+  diagramColor?: string;
+
+  /** Stroke width used for generated shapes and connections. */
+  strokeWidth?: number;
+
+  /** Canvas background color from user settings.
+   * Used for connection-label backgrounds.
+   * The actual Excalidraw canvas background should be applied to appState.viewBackgroundColor.
+   */
+  backgroundColor?: string;
 };
 
-type ExcalidrawSkeleton = Parameters<
+type ExcalidrawSkeleton = NonNullable<Parameters<
   typeof convertToExcalidrawElements
->[0][number];
+>[0]>[number];
 
 /* ============================================================
    BASIC HELPERS
@@ -394,6 +406,12 @@ export function convertDiagramToExcalidraw(
     offsetX = 0,
     offsetY = 0,
     idPrefix = `ai-${Date.now()}`,
+
+    // These defaults preserve the previous behavior when settings
+    // are not passed by the caller.
+    diagramColor = "#1e1e1e",
+    strokeWidth = 2,
+    backgroundColor = "#ffffff",
   } = options;
 
   const elements = diagram.elements;
@@ -497,7 +515,7 @@ export function convertDiagramToExcalidraw(
         text: element.text,
         fontSize: 20,
         fontFamily: 1,
-        strokeColor: "#1e1e1e",
+        strokeColor: diagramColor,
         backgroundColor:
           "transparent",
         textAlign: "left",
@@ -551,10 +569,10 @@ export function convertDiagramToExcalidraw(
         element.y + offsetY,
       width: element.width,
       height: element.height,
-      strokeColor: "#1e1e1e",
+      strokeColor: diagramColor,
       backgroundColor: "#ffffff",
       fillStyle: "solid",
-      strokeWidth: 2,
+      strokeWidth: strokeWidth,
       strokeStyle: "solid",
       roughness: 1,
       opacity: 100,
@@ -820,7 +838,7 @@ skeletons.push({
     relativePoints,
 
   strokeColor:
-    "#1e1e1e",
+    diagramColor,
 
   backgroundColor:
     "transparent",
@@ -829,7 +847,7 @@ skeletons.push({
     "solid",
 
   strokeWidth:
-    2,
+    strokeWidth,
 
   strokeStyle:
     "solid",
@@ -903,9 +921,8 @@ skeletons.push({
         text: connection.label,
         fontSize,
         fontFamily: 1,
-        strokeColor: "#1e1e1e",
-        backgroundColor:
-          "#ffffff",
+        strokeColor: diagramColor,
+        backgroundColor,
         textAlign: "center",
         verticalAlign: "middle",
         containerId: null,

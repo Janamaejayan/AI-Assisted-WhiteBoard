@@ -8,8 +8,12 @@ function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+function PopoverTrigger({ asChild, children, ...props }: PopoverPrimitive.Trigger.Props & { asChild?: boolean }) {
+  return <PopoverPrimitive.Trigger
+    data-slot="popover-trigger"
+    render={asChild && React.isValidElement(children) ? children : undefined}
+    {...props}
+  >{asChild ? undefined : children}</PopoverPrimitive.Trigger>
 }
 
 function PopoverContent({
@@ -18,11 +22,12 @@ function PopoverContent({
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  collisionPadding,
   ...props
 }: PopoverPrimitive.Popup.Props &
   Pick<
     PopoverPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset"
+    "align" | "alignOffset" | "side" | "sideOffset" | "collisionPadding"
   >) {
   return (
     <PopoverPrimitive.Portal>
@@ -31,6 +36,7 @@ function PopoverContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
         className="isolate z-50"
       >
         <PopoverPrimitive.Popup

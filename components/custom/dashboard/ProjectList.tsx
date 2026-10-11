@@ -20,30 +20,34 @@ import { toast } from '@/components/ui/toast'
 
 type Project = {
     projectName: string
-    previewImage: string
+    previewImage: string | null
     createdAt: string
-    updatedAt: string
+    updatedAt: string | null
     projectId: string
 }
 
 const ProjectList = () => {
     const [projectList, setProjectList] = useState<Project[]>([])
     const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [loadError, setLoadError] = useState(false)
 
     const { isLoaded, isSignedIn, user } = useUser()
 
     const GetProjectList = async () => {
+        setLoading(true)
+        setLoadError(false)
         try {
             const result = await axios.get('/api/projects')
-
-            console.log('Project List:', result.data)
-
             setProjectList(result.data)
         } catch (error) {
             console.error(
                 'Failed to fetch project list:',
                 error
             )
+            setLoadError(true)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -73,6 +77,7 @@ const ProjectList = () => {
                     (project) => project.projectId !== projectId
                 )
             );
+            window.dispatchEvent(new Event('projects:changed'));
 
             toast.add({
                 title: "Project moved to archive",
@@ -99,7 +104,22 @@ const ProjectList = () => {
     return (
         <div className="w-full">
 
-            {projectList.length === 0 ? (
+            {loading ? (
+                <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" role="status" aria-label="Loading boards">
+                    {[1, 2, 3, 4].map((item) => (
+                        <div key={item} className="overflow-hidden rounded-2xl border bg-card">
+                            <div className="aspect-video animate-pulse bg-muted" />
+                            <div className="space-y-2 p-4"><div className="h-4 w-2/3 animate-pulse rounded bg-muted" /><div className="h-3 w-1/3 animate-pulse rounded bg-muted" /></div>
+                        </div>
+                    ))}
+                </div>
+            ) : loadError ? (
+                <div className="mt-8 rounded-2xl border border-dashed bg-card p-10 text-center">
+                    <h2 className="font-semibold">Couldn’t load your boards</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Check your connection and try again.</p>
+                    <button type="button" onClick={GetProjectList} className="mt-4 rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted">Try again</button>
+                </div>
+            ) : projectList.length === 0 ? (
 
                 /* ================= EMPTY STATE ================= */
 
@@ -170,7 +190,8 @@ const ProjectList = () => {
                                     overflow-hidden
                                     rounded-2xl
                                     border
-                                    bg-background
+                                    bg-card
+                                    text-card-foreground
                                     shadow-sm
                                     transition-all
                                     duration-200
@@ -180,6 +201,7 @@ const ProjectList = () => {
                                     focus:ring-2
                                     focus:ring-primary
                                     focus:ring-offset-2
+                                    focus:ring-offset-background
                                 "
                             >
 
@@ -249,8 +271,8 @@ const ProjectList = () => {
                                         items-center
                                         justify-center
                                         rounded-full
-                                        bg-white
-                                        text-gray-800
+                                        bg-background
+                                        text-foreground
                                         opacity-0
                                         shadow-md
                                         transition-all
@@ -277,7 +299,7 @@ const ProjectList = () => {
                                             <p className="mt-1 text-xs text-muted-foreground">
                                                 Edited{' '}
                                                 {moment(
-                                                    project.updatedAt
+                                                    project.updatedAt || project.createdAt
                                                 ).fromNow()}
                                             </p>
 
@@ -303,8 +325,8 @@ const ProjectList = () => {
                                                 p-1.5
                                                 text-muted-foreground
                                                 transition-colors
-                                                hover:bg-red-50
-                                                hover:text-red-600
+                                                hover:bg-destructive/10
+                                                hover:text-destructive
                                                 disabled:pointer-events-none
                                                 disabled:opacity-50
                                             "

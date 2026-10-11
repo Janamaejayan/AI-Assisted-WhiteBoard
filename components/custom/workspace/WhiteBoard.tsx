@@ -26,12 +26,21 @@ import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
 
 import './whiteboard.css'
 import FloatingProperties from './FloatingProperties'
-import { version } from 'os'
 import { Button } from '@/components/ui/button'
 import AISidebar from './AISidebar'
+import { useRealtimeWhiteboard } from '@/hooks/useRealtimeWhiteboard'
 
 type Props = {
     onApiReady : ( api :ExcalidrawImperativeAPI ) => void;
+    access: 'owner' | 'edit' | 'view' | null;
+}
+
+type WhiteboardSettings = {
+    theme: "light" | "dark" | "system"
+    diagramColor: string
+    strokeWidth: number
+    backgroundColor: string
+    sharingPermission: "private" | "view" | "edit"
 }
 
 type ToolName =
@@ -64,7 +73,7 @@ const tools: Tool[] = [
     {
         name: 'selection',
         icon: MousePointer2,
-        color: 'text-blue-500',
+        color: 'text-primary',
         shortcut: '1',
     },
     {
@@ -118,7 +127,7 @@ const tools: Tool[] = [
     {
         name: 'eraser',
         icon: Eraser,
-        color: 'text-gray-500',
+        color: 'text-muted-foreground',
         shortcut: '0',
     },
     {
@@ -129,7 +138,8 @@ const tools: Tool[] = [
     },
 ]
 
-const WhiteBoard = ({ onApiReady }: Props) => {
+const WhiteBoard = ({ onApiReady, access }: Props) => {
+    const readOnly = access !== 'owner' && access !== 'edit'
         const [excalidrawAPI, setExcalidrawAPI] =
         useState<ExcalidrawImperativeAPI | null>(null)
 
@@ -146,7 +156,74 @@ const WhiteBoard = ({ onApiReady }: Props) => {
 
     const [showAISidebar, setShowAISidebar] = useState(false);
 
+    useEffect(() => {
+        if (readOnly && saveTimeRef.current) {
+            clearTimeout(saveTimeRef.current)
+            saveTimeRef.current = null
+        }
+    }, [readOnly])
+
+    useEffect(() => {
+        const url = new URL(window.location.href)
+        if (url.searchParams.get('ai') !== '1') return
+
+        setShowAISidebar(true)
+        url.searchParams.delete('ai')
+        window.history.replaceState(window.history.state, '', url.toString())
+    }, [])
+
+    useEffect(() => {
+        if (!excalidrawAPI) return
+
+        const handleSettingsUpdate = (
+            event: Event
+        ) => {
+            const customEvent =
+                event as CustomEvent<WhiteboardSettings>
+
+            const settings =
+                customEvent.detail
+
+            if (!settings) return
+
+            const currentAppState =
+                excalidrawAPI.getAppState()
+
+            excalidrawAPI.updateScene({
+                appState: {
+                    ...currentAppState,
+
+                    // Canvas background
+                    viewBackgroundColor:
+                        settings.backgroundColor,
+
+                    // New elements
+                    currentItemStrokeColor:
+                        settings.diagramColor,
+
+                    currentItemStrokeWidth:
+                        settings.strokeWidth,
+                },
+            })
+        }
+
+        window.addEventListener(
+            "whizboard-settings-updated",
+            handleSettingsUpdate
+        )
+
+        return () => {
+            window.removeEventListener(
+                "whizboard-settings-updated",
+                handleSettingsUpdate
+            )
+        }
+    }, [excalidrawAPI])
+
     const { projectId } = useParams()
+    const { connected, queueScene, applyingRemoteRef } = useRealtimeWhiteboard(
+        excalidrawAPI, String(projectId || ''), access
+    )
 
     /**
      * Change the active Excalidraw tool.
@@ -156,7 +233,7 @@ const WhiteBoard = ({ onApiReady }: Props) => {
      * - Keyboard shortcuts
      */
     const changeTool = (tool: ToolName) => {
-        if (!excalidrawAPI) return
+        if (!excalidrawAPI || readOnly) return
 
         // Update custom toolbar highlight
         setActiveTool(tool)
@@ -226,6 +303,9 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         appState: any,
         files: any
     ) => {
+        if (readOnly || applyingRemoteRef.current) return
+
+        queueScene()
 
         setCanvasState(appState);
 
@@ -286,6 +366,7 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         appState: any,
         files: any
     ) => {
+        if (readOnly) return
 
         const base64ImagePreview = await generatePreviewBase64();
         const res = await axios.post('/api/whiteboard', {
@@ -293,7 +374,8 @@ const WhiteBoard = ({ onApiReady }: Props) => {
             appState,
             files,
             projectId,
-            base64ImagePreview
+            base64ImagePreview,
+            previewOnly: connected,
         })
 
         if(res){
@@ -447,6 +529,35 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         }
     }
 
+    const applyDefaultSettings = async (
+        api: ExcalidrawImperativeAPI
+    ) => {
+        try {
+            const response = await axios.get(
+                "/api/settings"
+            );
+
+            if (!response.data?.settings) {
+                return;
+            }
+
+            const settings = response.data.settings;
+
+            api.updateScene({
+                appState: {
+                    ...api.getAppState(),
+                    viewBackgroundColor:
+                        settings.backgroundColor,
+                },
+            });
+        } catch (error) {
+            console.error(
+                "Failed to load default workspace settings:",
+                error
+            );
+        }
+    };
+
     const handleLock = () => {
         if (!excalidrawAPI || !selectedElement) return;
 
@@ -483,22 +594,26 @@ const WhiteBoard = ({ onApiReady }: Props) => {
         <div className="relative h-[90vh]">
             <Excalidraw
                 // @ts-ignore
-                excalidrawAPI={(api) => {
+                excalidrawAPI={async (api) => {
                     setExcalidrawAPI(api);
                     onApiReady(api);
 
                     // Default tool
                     api.setActiveTool({
-                        type: 'selection',
-                    })
+                        type: "selection",
+                    });
+
+                    // Load user's default settings
+                    await applyDefaultSettings(api);
                 }}
                 onChange={handleCanvasChange}
+                viewModeEnabled={readOnly}
             />
 
             {/* ================================
                 Custom Top Toolbar
             ================================= */}
-            <div
+            {!readOnly && <div
                 className="
                     absolute
                     left-1/2
@@ -512,8 +627,8 @@ const WhiteBoard = ({ onApiReady }: Props) => {
 
                     rounded-xl
                     border
-                    border-gray-200
-                    bg-white
+                    border-border
+                    bg-background
                     p-1.5
 
                     shadow-lg
@@ -554,8 +669,8 @@ const WhiteBoard = ({ onApiReady }: Props) => {
 
                                 ${
                                     isActive
-                                        ? 'bg-blue-100'
-                                        : 'hover:bg-gray-100'
+                                        ? 'bg-primary/15'
+                                        : 'hover:bg-muted'
                                 }
                             `}
                         >
@@ -592,8 +707,8 @@ const WhiteBoard = ({ onApiReady }: Props) => {
 
                                         ${
                                             isActive
-                                                ? 'text-blue-600'
-                                                : 'text-gray-400'
+                                                ? 'text-primary'
+                                                : 'border-border'
                                         }
                                     `}
                                 >
@@ -603,9 +718,9 @@ const WhiteBoard = ({ onApiReady }: Props) => {
                         </button>
                     )
                 })}
-            </div>
+            </div>}
 
-            <FloatingProperties selectedElement={selectedElement} position={floatingPosition}
+            {!readOnly && <FloatingProperties selectedElement={selectedElement} position={floatingPosition}
                 onPropertyChange = {(propertyName, value) => handlePropertyChange(propertyName, value)}
                 onDelete={handleDeleteElement}
                 onDuplicate={handleDuplicate}
@@ -613,15 +728,21 @@ const WhiteBoard = ({ onApiReady }: Props) => {
                 onSendToBack={() => handleBringFront('back')}
                 onLock={handleLock}
                 
-            />
+            />}
 
-            <div className='absolute right-15 bottom-3 z-50'>
+            {!readOnly && <div className='absolute right-15 bottom-3 z-50'>
                 <Button size = {'lg'} onClick={() => setShowAISidebar(!showAISidebar)}>
                     < LucideSparkles /> AI
                 </Button>
-            </div>
+            </div>}
 
-            {showAISidebar && < AISidebar excalidrawApi={excalidrawAPI} onClose={handleCloseSideBar}/>}
+            {!readOnly && showAISidebar && < AISidebar excalidrawApi={excalidrawAPI} onClose={handleCloseSideBar}/>}
+
+            {access && (
+                <div className="absolute bottom-3 left-4 z-50 rounded-md border bg-background/90 px-2 py-1 text-xs text-muted-foreground">
+                    {connected ? 'Live' : 'Reconnecting...'}
+                </div>
+            )}
         </div>
     )
 }

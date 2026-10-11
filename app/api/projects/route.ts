@@ -1,7 +1,9 @@
-import { db, projects, WhiteBoardData } from '@/db'
+import { db, projects, projectShares, users, WhiteBoardData } from '@/db'
 import { currentUser } from '@clerk/nextjs/server'
-import { and, eq } from 'drizzle-orm'
+import { and, count, eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+import { createProjectWithinLimit, restoreProjectWithinLimit } from '@/lib/projectLimit'
+import { getProjectAccess } from '@/lib/projectAccess'
 
 export async function POST(req: NextRequest) {
     try {
@@ -23,20 +25,20 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const result = await db
-            .insert(projects)
-            .values({
-                projectId,
-                projectName,
-                userEmail: user.primaryEmailAddress.emailAddress,
+        const createdProject = await createProjectWithinLimit(
+            projectId,
+            projectName,
+            user.primaryEmailAddress.emailAddress
+        );
 
-                // New projects are always active
-                isDeleted: false,
-                deletedAt: null,
-            })
-            .returning();
+        if (!createdProject) {
+            return NextResponse.json(
+                { error: "Board limit reached" },
+                { status: 409 }
+            );
+        }
 
-        return NextResponse.json(result[0]);
+        return NextResponse.json(createdProject);
 
     } catch (error) {
         console.error("POST /api/projects error:", error);
@@ -54,6 +56,8 @@ export async function GET(req: NextRequest) {
 
         const projectId = searchParams.get("projectId");
         const archived = searchParams.get("archived") === "true";
+        const summary = searchParams.get("summary") === "true";
+        const shared = searchParams.get("shared") === "true";
 
         const user = await currentUser();
 
@@ -67,6 +71,46 @@ export async function GET(req: NextRequest) {
 
         const userEmail =
             user.primaryEmailAddress.emailAddress;
+
+        if (summary) {
+            const [projectCount, userRecord] = await Promise.all([
+                db.select({ count: count() })
+                    .from(projects)
+                    .where(and(
+                        eq(projects.userEmail, userEmail),
+                        eq(projects.isDeleted, false)
+                    )),
+                db.select({ credits: users.credits })
+                    .from(users)
+                    .where(eq(users.email, userEmail))
+                    .limit(1),
+            ]);
+
+            return NextResponse.json({
+                count: projectCount[0].count,
+                total: userRecord[0]?.credits ?? null,
+            });
+        }
+
+        if (shared && !projectId) {
+            const sharedProjects = await db.select({
+                projectId: projects.projectId,
+                projectName: projects.projectName,
+                ownerEmail: projects.userEmail,
+                permission: projectShares.permission,
+                previewImage: WhiteBoardData.previewImage,
+                updatedAt: WhiteBoardData.updatedAt,
+            })
+                .from(projectShares)
+                .innerJoin(projects, eq(projectShares.projectId, projects.projectId))
+                .leftJoin(WhiteBoardData, eq(projects.projectId, WhiteBoardData.projectId))
+                .where(and(
+                    eq(projectShares.email, userEmail.toLowerCase()),
+                    eq(projects.isDeleted, false)
+                ));
+
+            return NextResponse.json(sharedProjects);
+        }
 
         // ============================================
         // GET ALL PROJECTS
@@ -112,13 +156,21 @@ export async function GET(req: NextRequest) {
         // GET SINGLE PROJECT
         // ============================================
 
+        const access = await getProjectAccess(projectId, userEmail);
+
+        if (!access) {
+            return NextResponse.json(
+                { error: "Project not found" },
+                { status: 404 }
+            );
+        }
+
         const userProject = await db
             .select()
             .from(projects)
             .where(
                 and(
                     eq(projects.projectId, projectId),
-                    eq(projects.userEmail, userEmail),
                     eq(projects.isDeleted, false)
                 )
             );
@@ -150,6 +202,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({
             ...whiteboardData,
             projectName: userProject[0].projectName,
+            access,
         });
 
     } catch (error) {
@@ -336,24 +389,19 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Restore
-    const restoredProject = await db
-      .update(projects)
-      .set({
-        isDeleted: false,
-        deletedAt: null,
-      })
-      .where(
-        and(
-          eq(projects.projectId, projectId),
-          eq(projects.userEmail, userEmail)
-        )
-      )
-      .returning();
+    const restoredProject = await restoreProjectWithinLimit(projectId, userEmail);
+
+    if (!restoredProject) {
+      return NextResponse.json(
+        { error: "Board limit reached. Archive another board before restoring this one." },
+        { status: 409 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
       message: "Project restored successfully",
-      project: restoredProject[0],
+      project: restoredProject,
     });
 
   } catch (error) {

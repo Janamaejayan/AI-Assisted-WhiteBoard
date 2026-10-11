@@ -10,8 +10,8 @@ const DashboardLayout = ({
     <div className="flex flex-1 flex-col">
       <AppHeader />
 
-      <div className="flex-1 p-5">
-        {children}
+      <div className="flex-1 px-5 py-8 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-7xl">{children}</div>
       </div>
     </div>
   );

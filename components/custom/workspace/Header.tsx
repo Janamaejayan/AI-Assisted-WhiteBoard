@@ -4,33 +4,58 @@ import Image from 'next/image'
 import React from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from '@/components/ui/button'
-import { Save, Share, DownloadIcon } from 'lucide-react'
+import {
+    Save,
+    DownloadIcon
+} from 'lucide-react'
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import ShareBoardDialog from './ShareBoardDialog'
 
 type Props = {
     selectedTab: (value: string) => void;
-    onExport : any;
-    projectName : string;
+    onExport: any;
+    projectName: string;
+    projectId: string;
+    access: 'owner' | 'edit' | 'view' | null;
 }
 
-const Header = ({ selectedTab, onExport, projectName }: Props) => {
-    return (
-        <div className='p-3 border-b flex justify-between'>
+const Header = ({
+    selectedTab,
+    onExport,
+    projectName,
+    projectId,
+    access
+}: Props) => {
 
-            <div className='flex gap-2 items-center'>
+    return (
+        <div className="p-3 border-b flex items-center justify-between">
+
+            {/* LEFT */}
+            <div className="flex gap-2 items-center">
+
+                <SidebarTrigger />
+
                 <Image
-                    src='/logo.svg'
-                    alt='logo'
+                    src="/logo.svg"
+                    alt="logo"
                     width={35}
                     height={35}
                 />
+
                 <h2>{projectName}</h2>
+                {access === 'view' && (
+                    <span className="rounded bg-muted px-2 py-1 text-xs text-muted-foreground">Read only</span>
+                )}
+
             </div>
 
+            {/* CENTER */}
             <div>
                 <Tabs
                     defaultValue="whiteboard"
-                    
-                    onValueChange={(value) => selectedTab(value)}
+                    onValueChange={(value) =>
+                        selectedTab(value)
+                    }
                 >
                     <TabsList>
                         <TabsTrigger value="whiteboard">
@@ -44,14 +69,21 @@ const Header = ({ selectedTab, onExport, projectName }: Props) => {
                 </Tabs>
             </div>
 
-            <div className='flex gap-2'>
-                <Button> <Save />
+            {/* RIGHT */}
+            <div className="flex gap-2">
+
+                <Button disabled={access !== 'owner' && access !== 'edit'}>
+                    <Save />
                     Save
                 </Button>
-                < Button variant={'outline'}>
-                <Share/> Share</Button>
 
-                <Button onClick={onExport}> <DownloadIcon /> Export </Button>
+                {access === 'owner' && <ShareBoardDialog projectId={projectId} />}
+
+                <Button onClick={onExport} disabled={!projectName}>
+                    <DownloadIcon />
+                    Export
+                </Button>
+
             </div>
 
         </div>

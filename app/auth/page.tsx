@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import {
   ArrowRight,
@@ -15,6 +16,10 @@ import {
 import AuthForm from "@/components/auth/AuthForm"
 
 export default function AuthPage() {
+  return <Suspense fallback={null}><AuthPageContent /></Suspense>
+}
+
+function AuthPageContent() {
   const searchParams = useSearchParams()
 
   const initialMode =
@@ -27,9 +32,9 @@ export default function AuthPage() {
       min-h-screen
       overflow-hidden
       bg-gradient-to-br
-      from-indigo-50
-      via-white
-      to-violet-50
+      from-indigo-50 dark:from-indigo-400/10
+      via-white dark:via-background
+      to-violet-50 dark:to-violet-400/10
     ">
 
       {/* =====================================================
@@ -41,8 +46,8 @@ export default function AuthPage() {
         h-[72px]
         items-center
         border-b
-        border-slate-200/80
-        bg-white/80
+        border-border/80
+        bg-background/80
         px-6
         backdrop-blur-xl
       ">
@@ -66,7 +71,7 @@ export default function AuthPage() {
         </Link>
 
 
-        <div className="ml-auto text-sm text-slate-500">
+        <div className="ml-auto text-sm text-muted-foreground">
 
           <span className="hidden sm:inline">
             Ready to visualize your ideas?
@@ -77,8 +82,8 @@ export default function AuthPage() {
             className="
               ml-2
               font-semibold
-              text-indigo-600
-              hover:text-indigo-700
+              text-indigo-600 dark:text-indigo-300
+              hover:text-indigo-700 dark:hover:text-indigo-200
             "
           >
             Back to home
@@ -118,7 +123,7 @@ export default function AuthPage() {
           h-96
           w-96
           rounded-full
-          bg-blue-300/20
+          bg-primary/20
           blur-3xl
         " />
 
@@ -147,13 +152,13 @@ export default function AuthPage() {
             gap-2
             rounded-full
             border
-            border-indigo-200
-            bg-indigo-50
+            border-indigo-200 dark:border-indigo-400/20
+            bg-indigo-50 dark:bg-indigo-400/10
             px-4
             py-2
             text-xs
             font-semibold
-            text-indigo-700
+            text-indigo-700 dark:text-indigo-200
           ">
             <Sparkles size={14} />
             Your intelligent visual workspace
@@ -166,7 +171,7 @@ export default function AuthPage() {
             font-bold
             leading-[1.05]
             tracking-[-0.04em]
-            text-slate-950
+            text-foreground
           ">
             Create.
             <br />
@@ -192,7 +197,7 @@ export default function AuthPage() {
             max-w-lg
             text-base
             leading-7
-            text-slate-600
+            text-foreground
           ">
             Bring your ideas to life with a collaborative
             whiteboard designed to work alongside you and
@@ -204,14 +209,14 @@ export default function AuthPage() {
 
             <AuthBenefit
               icon={<Sparkles size={17} />}
-              iconClass="bg-violet-100 text-violet-600"
+              iconClass="bg-violet-500/10 dark:bg-violet-400/15 text-violet-600 dark:text-violet-300"
               title="AI-assisted diagrams"
               description="Generate flowcharts, architectures and workflows from natural language."
             />
 
             <AuthBenefit
               icon={<Users size={17} />}
-              iconClass="bg-blue-100 text-blue-600"
+              iconClass="bg-primary/15 text-primary"
               title="Collaborative workspace"
               description="Keep your team and projects connected in one visual workspace."
             />
@@ -236,8 +241,8 @@ export default function AuthPage() {
             overflow-hidden
             rounded-2xl
             border
-            border-indigo-100
-            bg-white/80
+            border-indigo-100 dark:border-border
+            bg-background/80
             p-4
             shadow-xl
             shadow-indigo-100/40
@@ -261,13 +266,13 @@ export default function AuthPage() {
               top-10
               rounded-lg
               border
-              border-blue-200
-              bg-blue-50
+              border-primary/25
+              bg-primary/10
               px-4
               py-2
               text-xs
               font-semibold
-              text-blue-700
+              text-primary
             ">
               Idea
             </div>
@@ -287,13 +292,13 @@ export default function AuthPage() {
               top-10
               rounded-lg
               border
-              border-violet-200
-              bg-violet-50
+              border-violet-200 dark:border-violet-400/20
+              bg-violet-50 dark:bg-violet-400/10
               px-4
               py-2
               text-xs
               font-semibold
-              text-violet-700
+              text-violet-700 dark:text-violet-200
             ">
               Diagram
             </div>
@@ -377,7 +382,7 @@ function AuthBenefit({
           max-w-md
           text-sm
           leading-6
-          text-slate-500
+          text-muted-foreground
         ">
           {description}
         </p>

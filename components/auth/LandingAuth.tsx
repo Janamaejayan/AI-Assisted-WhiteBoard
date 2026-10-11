@@ -12,7 +12,7 @@ export default function LandingAuth() {
   return (
     <div className="w-full max-w-[430px]">
       {/* Auth card */}
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+      <div className="overflow-hidden rounded-2xl border border-border bg-background shadow-xl">
 
         {/* Logo + heading */}
         <div className="px-8 pt-8 text-center">
@@ -26,13 +26,13 @@ export default function LandingAuth() {
             />
           </div>
 
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             {mode === "signin"
               ? "Welcome back"
               : "Create your account"}
           </h2>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             {mode === "signin"
               ? "Sign in to continue to WhizBoard"
               : "Start creating smarter whiteboards with AI"}
@@ -41,7 +41,7 @@ export default function LandingAuth() {
 
         {/* Switch */}
         <div className="px-8 pt-6">
-          <div className="grid grid-cols-2 rounded-lg bg-gray-100 p-1">
+          <div className="grid grid-cols-2 rounded-lg bg-muted p-1">
 
             <button
               type="button"
@@ -54,8 +54,8 @@ export default function LandingAuth() {
                 transition-all
                 ${
                   mode === "signin"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-900"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }
               `}
             >
@@ -73,8 +73,8 @@ export default function LandingAuth() {
                 transition-all
                 ${
                   mode === "signup"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-900"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }
               `}
             >
@@ -103,22 +103,22 @@ export default function LandingAuth() {
                   header: "hidden",
 
                   socialButtonsBlockButton:
-                    "h-11 border-gray-200 bg-white text-gray-800 hover:bg-gray-50",
+                    "h-11 border-border bg-background text-foreground hover:bg-muted",
 
                   socialButtonsBlockButtonText:
                     "text-sm font-medium",
 
                   dividerLine:
-                    "bg-gray-200",
+                    "bg-muted-foreground/20",
 
                   dividerText:
-                    "text-xs text-gray-400",
+                    "text-xs border-border",
 
                   formFieldLabel:
-                    "text-sm font-medium text-gray-700",
+                    "text-sm font-medium text-foreground",
 
                   formFieldInput:
-                    "h-11 border-gray-200 bg-white text-sm shadow-none",
+                    "h-11 border-border bg-background text-sm shadow-none",
 
                   formButtonPrimary:
                     "h-11 bg-gray-900 hover:bg-gray-800 text-sm font-medium shadow-none",
@@ -158,22 +158,22 @@ export default function LandingAuth() {
                   header: "hidden",
 
                   socialButtonsBlockButton:
-                    "h-11 border-gray-200 bg-white text-gray-800 hover:bg-gray-50",
+                    "h-11 border-border bg-background text-foreground hover:bg-muted",
 
                   socialButtonsBlockButtonText:
                     "text-sm font-medium",
 
                   dividerLine:
-                    "bg-gray-200",
+                    "bg-muted-foreground/20",
 
                   dividerText:
-                    "text-xs text-gray-400",
+                    "text-xs border-border",
 
                   formFieldLabel:
-                    "text-sm font-medium text-gray-700",
+                    "text-sm font-medium text-foreground",
 
                   formFieldInput:
-                    "h-11 border-gray-200 bg-white text-sm shadow-none",
+                    "h-11 border-border bg-background text-sm shadow-none",
 
                   formButtonPrimary:
                     "h-11 bg-gray-900 hover:bg-gray-800 text-sm font-medium shadow-none",
@@ -201,7 +201,7 @@ export default function LandingAuth() {
       </div>
 
       {/* Footer */}
-      <p className="mt-5 text-center text-xs text-gray-500">
+      <p className="mt-5 text-center text-xs text-muted-foreground">
         By continuing, you agree to WhizBoard's terms and privacy policy.
       </p>
     </div>

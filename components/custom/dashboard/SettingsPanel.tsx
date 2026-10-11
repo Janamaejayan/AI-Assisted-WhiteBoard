@@ -14,6 +14,7 @@ import {
 import { useTheme } from "next-themes"
 
 interface WhiteboardSettings {
+  theme: "light" | "dark" | "system"
   diagramColor: string
   strokeWidth: number
   backgroundColor: string
@@ -26,6 +27,7 @@ interface SettingsPanelProps {
 }
 
 const defaultSettings: WhiteboardSettings = {
+  theme: "system",
   diagramColor: "#000000",
   strokeWidth: 2,
   backgroundColor: "#ffffff",
@@ -55,12 +57,13 @@ export default function SettingsPanel({
   open,
   onClose,
 }: SettingsPanelProps) {
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
 
   const [settings, setSettings] =
     useState<WhiteboardSettings>(defaultSettings)
 
   const [mounted, setMounted] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // --------------------------------------------------
   // Mount
@@ -68,37 +71,57 @@ export default function SettingsPanel({
 
   useEffect(() => {
     setMounted(true)
+  }, [])
 
-    const savedSettings =
-      localStorage.getItem("whizboard-settings")
+  // --------------------------------------------------
+  // Load settings from DB whenever panel opens
+  // --------------------------------------------------
 
-    if (savedSettings) {
+  useEffect(() => {
+    if (!open) return
+
+    const loadSettings = async () => {
+      setLoading(true)
+
       try {
-        setSettings({
-          ...defaultSettings,
-          ...JSON.parse(savedSettings),
+        const response = await fetch("/api/settings", {
+          method: "GET",
+          cache: "no-store",
         })
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch settings: ${response.status}`
+          )
+        }
+
+        const data = await response.json()
+
+        if (!data?.settings) {
+          throw new Error("Settings were not returned")
+        }
+
+        const dbSettings: WhiteboardSettings = {
+          ...defaultSettings,
+          ...data.settings,
+        }
+
+        setSettings(dbSettings)
+
+        // Keep next-themes in sync with DB
+        setTheme(dbSettings.theme)
       } catch (error) {
         console.error(
           "Failed to load WhizBoard settings:",
           error
         )
+      } finally {
+        setLoading(false)
       }
     }
-  }, [])
 
-  // --------------------------------------------------
-  // Save settings
-  // --------------------------------------------------
-
-  useEffect(() => {
-    if (!mounted) return
-
-    localStorage.setItem(
-      "whizboard-settings",
-      JSON.stringify(settings)
-    )
-  }, [settings, mounted])
+    loadSettings()
+  }, [open, setTheme])
 
   // --------------------------------------------------
   // Escape key
@@ -127,27 +150,96 @@ export default function SettingsPanel({
   }, [open, onClose])
 
   // --------------------------------------------------
-  // Don't render on server / when closed
-  // --------------------------------------------------
-
-  if (!mounted || !open) {
-    return null
-  }
-
-  // --------------------------------------------------
   // Update setting
   // --------------------------------------------------
 
-  const updateSetting = <
+  const updateSetting = async <
     K extends keyof WhiteboardSettings
   >(
     key: K,
     value: WhiteboardSettings[K]
   ) => {
+    // Save previous state so we can roll back if the API fails
+    const previousSettings = settings
+
+    // Update UI immediately
     setSettings((previous) => ({
       ...previous,
       [key]: value,
     }))
+
+    // Theme should immediately affect the application
+    if (key === "theme") {
+      setTheme(value as WhiteboardSettings["theme"])
+    }
+
+    try {
+      const response = await fetch("/api/settings", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          [key]: value,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(
+          () => null
+        )
+
+        throw new Error(
+          errorData?.error ||
+            `Failed to save setting: ${response.status}`
+        )
+      }
+
+      const data = await response.json()
+
+      if (!data?.settings) {
+        throw new Error(
+          "Updated settings were not returned"
+        )
+      }
+
+      const updatedSettings: WhiteboardSettings = {
+        ...defaultSettings,
+        ...data.settings,
+      }
+
+      // Make the UI exactly match the DB response
+      setSettings(updatedSettings)
+
+      window.dispatchEvent(
+        new CustomEvent("whizboard-settings-updated", {
+          detail: updatedSettings,
+        })
+      )
+
+      // Keep next-themes synchronized
+      setTheme(updatedSettings.theme)
+    } catch (error) {
+      console.error(
+        `Failed to update ${String(key)}:`,
+        error
+      )
+
+      // Roll back UI if DB update failed
+      setSettings(previousSettings)
+
+      if (key === "theme") {
+        setTheme(previousSettings.theme)
+      }
+    }
+  }
+
+  // --------------------------------------------------
+  // Don't render on server / when closed
+  // --------------------------------------------------
+
+  if (!mounted || !open) {
+    return null
   }
 
   // --------------------------------------------------
@@ -177,17 +269,21 @@ export default function SettingsPanel({
       <div
         className="
           fixed
-          left-[268px]
+          left-4
+          right-4
           bottom-4
           z-[9999]
           w-[420px]
+          max-w-[calc(100vw-32px)]
+          sm:left-[268px]
+          sm:right-auto
           max-h-[calc(100vh-32px)]
           overflow-hidden
           rounded-xl
           border
-          border-gray-200
-          bg-white
-          text-gray-900
+          border-border
+          bg-background
+          text-foreground
           shadow-2xl
           animate-in
           fade-in
@@ -208,17 +304,17 @@ export default function SettingsPanel({
             items-center
             justify-between
             border-b
-            border-gray-200
+            border-border
             px-5
             py-4
           "
         >
           <div>
-            <h2 className="text-sm font-semibold text-gray-900">
+            <h2 className="text-sm font-semibold text-foreground">
               Settings
             </h2>
 
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Customize your WhizBoard experience
             </p>
           </div>
@@ -228,10 +324,10 @@ export default function SettingsPanel({
             className="
               rounded-md
               p-1.5
-              text-gray-500
+              text-muted-foreground
               transition
-              hover:bg-gray-100
-              hover:text-gray-900
+              hover:bg-muted
+              hover:text-foreground
             "
           >
             <X size={17} />
@@ -258,49 +354,56 @@ export default function SettingsPanel({
             <div className="mb-3 flex items-center gap-2">
               <Palette
                 size={16}
-                className="text-gray-700"
+                className="text-foreground"
               />
 
               <div>
-                <h3 className="text-sm font-medium text-gray-900">
+                <h3 className="text-sm font-medium text-foreground">
                   Appearance
                 </h3>
 
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Choose your preferred theme
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-
               <ThemeButton
-                active={theme === "light"}
+                active={settings.theme === "light"}
                 icon={<Sun size={16} />}
                 label="Light"
                 onClick={() =>
-                  setTheme("light")
+                  updateSetting(
+                    "theme",
+                    "light"
+                  )
                 }
               />
 
               <ThemeButton
-                active={theme === "dark"}
+                active={settings.theme === "dark"}
                 icon={<Moon size={16} />}
                 label="Dark"
                 onClick={() =>
-                  setTheme("dark")
+                  updateSetting(
+                    "theme",
+                    "dark"
+                  )
                 }
               />
 
               <ThemeButton
-                active={theme === "system"}
+                active={settings.theme === "system"}
                 icon={<Monitor size={16} />}
                 label="System"
                 onClick={() =>
-                  setTheme("system")
+                  updateSetting(
+                    "theme",
+                    "system"
+                  )
                 }
               />
-
             </div>
           </section>
 
@@ -315,7 +418,6 @@ export default function SettingsPanel({
             />
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
-
               {diagramColors.map((color) => (
                 <button
                   key={color}
@@ -332,7 +434,7 @@ export default function SettingsPanel({
                     w-8
                     rounded-full
                     border
-                    border-gray-200
+                    border-border
                     transition
                     hover:scale-110
                   "
@@ -374,11 +476,10 @@ export default function SettingsPanel({
                   overflow-hidden
                   rounded-full
                   border
-                  border-gray-200
-                  bg-white
+                  border-border
+                  bg-background
                 "
               />
-
             </div>
           </section>
 
@@ -388,16 +489,14 @@ export default function SettingsPanel({
 
           <section>
             <div className="flex items-center justify-between">
-
               <SettingLabel
                 title="Stroke width"
                 description="Default thickness for drawings"
               />
 
-              <span className="text-xs font-semibold text-gray-700">
+              <span className="text-xs font-semibold text-foreground">
                 {settings.strokeWidth}px
               </span>
-
             </div>
 
             <input
@@ -420,7 +519,7 @@ export default function SettingsPanel({
               "
             />
 
-            <div className="flex justify-between text-[11px] text-gray-500">
+            <div className="flex justify-between text-[11px] text-muted-foreground">
               <span>Thin</span>
               <span>Thick</span>
             </div>
@@ -437,7 +536,6 @@ export default function SettingsPanel({
             />
 
             <div className="mt-3 grid grid-cols-6 gap-2">
-
               {backgroundColors.map(
                 (color) => (
                   <button
@@ -454,7 +552,7 @@ export default function SettingsPanel({
                       h-9
                       rounded-md
                       border
-                      border-gray-200
+                      border-border
                       transition
                       hover:scale-105
                     "
@@ -471,14 +569,13 @@ export default function SettingsPanel({
                           absolute
                           inset-0
                           m-auto
-                          text-gray-700
+                          text-slate-900
                         "
                       />
                     )}
                   </button>
                 )
               )}
-
             </div>
           </section>
 
@@ -487,28 +584,24 @@ export default function SettingsPanel({
           ================================================= */}
 
           <section>
-
             <div className="mb-3 flex items-center gap-2">
-
               <Users
                 size={16}
-                className="text-gray-700"
+                className="text-foreground"
               />
 
               <div>
-                <h3 className="text-sm font-medium text-gray-900">
+                <h3 className="text-sm font-medium text-foreground">
                   Default sharing
                 </h3>
 
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Permission for newly created boards
                 </p>
               </div>
-
             </div>
 
             <div className="space-y-2">
-
               <PermissionOption
                 selected={
                   settings.sharingPermission ===
@@ -529,8 +622,8 @@ export default function SettingsPanel({
                   settings.sharingPermission ===
                   "view"
                 }
-                title="Anyone with the link can view"
-                description="Others can view but cannot edit"
+                title="Invited people can view"
+                description="People you invite can view but cannot edit"
                 onClick={() =>
                   updateSetting(
                     "sharingPermission",
@@ -544,8 +637,8 @@ export default function SettingsPanel({
                   settings.sharingPermission ===
                   "edit"
                 }
-                title="Anyone with the link can edit"
-                description="Others can view and modify"
+                title="Invited people can edit"
+                description="People you invite can view and modify"
                 onClick={() =>
                   updateSetting(
                     "sharingPermission",
@@ -553,9 +646,7 @@ export default function SettingsPanel({
                   )
                 }
               />
-
             </div>
-
           </section>
         </div>
 
@@ -566,13 +657,15 @@ export default function SettingsPanel({
         <div
           className="
             border-t
-            border-gray-200
+            border-border
             px-5
             py-3
           "
         >
-          <p className="text-center text-[11px] text-gray-500">
-            Your preferences are saved automatically
+          <p className="text-center text-[11px] text-muted-foreground">
+            {loading
+              ? "Loading your preferences..."
+              : "Your preferences are saved automatically"}
           </p>
         </div>
       </div>
@@ -580,7 +673,6 @@ export default function SettingsPanel({
     document.body
   )
 }
-
 
 /* =========================================================
    SETTING LABEL
@@ -595,17 +687,16 @@ function SettingLabel({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-medium text-gray-900">
+      <h3 className="text-sm font-medium text-foreground">
         {title}
       </h3>
 
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="mt-1 text-xs text-muted-foreground">
         {description}
       </p>
     </div>
   )
 }
-
 
 /* =========================================================
    THEME BUTTON
@@ -638,8 +729,8 @@ function ThemeButton({
         transition
         ${
           active
-            ? "border-blue-500 bg-blue-50 text-blue-600"
-            : "border-gray-200 text-gray-700 hover:bg-gray-50"
+            ? "border-primary bg-primary/10 text-primary"
+            : "border-border text-foreground hover:bg-muted"
         }
       `}
     >
@@ -649,7 +740,6 @@ function ThemeButton({
     </button>
   )
 }
-
 
 /* =========================================================
    PERMISSION OPTION
@@ -681,17 +771,17 @@ function PermissionOption({
         transition
         ${
           selected
-            ? "border-blue-500 bg-blue-50"
-            : "border-gray-200 hover:bg-gray-50"
+            ? "border-primary bg-primary/10"
+            : "border-border hover:bg-muted"
         }
       `}
     >
       <div>
-        <p className="text-xs font-medium text-gray-900">
+        <p className="text-xs font-medium text-foreground">
           {title}
         </p>
 
-        <p className="mt-1 text-[11px] text-gray-500">
+        <p className="mt-1 text-[11px] text-muted-foreground">
           {description}
         </p>
       </div>
@@ -699,7 +789,7 @@ function PermissionOption({
       {selected && (
         <Check
           size={16}
-          className="shrink-0 text-blue-600"
+          className="shrink-0 text-primary"
         />
       )}
     </button>

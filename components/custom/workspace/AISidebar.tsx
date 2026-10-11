@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-// import { convertToExcalidrawElements } from '@excalidraw/excalidraw/types'
 import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
 import { convertToExcalidrawElements } from '@excalidraw/excalidraw'
 import {
@@ -19,61 +18,76 @@ import {
 import React, { useState } from 'react'
 import axios from 'axios'
 import {
-  convertDiagramToExcalidraw,
+    convertDiagramToExcalidraw,
 } from "@/lib/excalidraw";
 
-type Props ={
-    excalidrawApi : ExcalidrawImperativeAPI | null,
+type Props = {
+    excalidrawApi: ExcalidrawImperativeAPI | null,
     onClose: () => void;
 }
 
-const AISidebar = ({excalidrawApi, onClose} : Props) => {
+interface WhiteboardSettings {
+    theme: "light" | "dark" | "system";
+    diagramColor: string;
+    strokeWidth: number;
+    backgroundColor: string;
+    sharingPermission: "private" | "view" | "edit";
+}
+
+const defaultSettings: WhiteboardSettings = {
+    theme: "system",
+    diagramColor: "#000000",
+    strokeWidth: 2,
+    backgroundColor: "#ffffff",
+    sharingPermission: "private",
+};
+
+const AISidebar = ({ excalidrawApi, onClose }: Props) => {
 
     const Aitools = [
         {
             name: 'Generate Diagrams',
             desc: 'Generate diagrams in seconds',
             icon: PencilRuler,
-            color: 'text-blue-600 bg-blue-100',
+            color: 'text-primary bg-primary/15',
         },
         {
             name: 'Flowchart',
             desc: 'Turn ideas into visual workflows',
             icon: Workflow,
-            color: 'text-purple-600 bg-purple-100',
+            color: 'text-violet-500 bg-violet-500/10 dark:text-violet-400 dark:bg-violet-400/15',
         },
         {
             name: 'Architecture',
             desc: 'Generate system architecture diagrams',
             icon: Network,
-            color: 'text-orange-600 bg-orange-100',
+            color: 'text-orange-500 bg-orange-500/10 dark:text-orange-400 dark:bg-orange-400/15',
         },
         {
             name: 'Web Mockup',
             desc: 'Generate website wireframes and layouts',
             icon: Monitor,
-            color: 'text-cyan-600 bg-cyan-100',
+            color: 'text-cyan-500 bg-cyan-500/10 dark:text-cyan-400 dark:bg-cyan-400/15',
         },
         {
             name: 'Mobile Mockup',
             desc: 'Generate mobile app wireframes',
             icon: Smartphone,
-            color: 'text-pink-600 bg-pink-100',
+            color: 'text-pink-500 bg-pink-500/10 dark:text-pink-400 dark:bg-pink-400/15',
         },
-    ] 
+    ]
 
     const [selectedTool, setSelectedTool] = useState<string | null>(null)
-    const [userInput, setUserInput] = useState('');
-    const AI_PLACEHOLDER_PREFIX = 'ai-placeholder-';
-    const [loading, setLoading] = useState(false);
-
+    const [userInput, setUserInput] = useState('')
+    const AI_PLACEHOLDER_PREFIX = 'ai-placeholder-'
+    const [loading, setLoading] = useState(false)
 
     const AiPrompts = [{
         name: "Generate Diagrams",
         desc: "Create visual diagrams",
         icon: PencilRuler,
-        color: "text-blue-600",
-        bgColor: "bg-blue-50",
+        color: "text-primary",
+        bgColor: "bg-primary/10",
         prompt: `
         You are an expert visual diagram generation agent.
         Your task is to convert the user's idea into a clear, structured, professional diagram.
@@ -93,12 +107,12 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
         Output only valid Excalidraw-compatible JSON elements.
         Do not include markdown, explanations, or additional text outside the JSON.
         `
-        }, {
+    }, {
         name: "Flowchart",
         desc: "Visualize workflows",
         icon: Workflow,
-        color: "text-violet-600",
-        bgColor: "bg-violet-50",
+        color: "text-violet-500 dark:text-violet-400",
+        bgColor: "bg-violet-500/10 dark:bg-violet-400/15",
         prompt: `
         You are an expert flowchart generation agent.
         Convert the user's description into a professional flowchart.
@@ -119,12 +133,12 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
         Output only valid Excalidraw-compatible JSON elements.
         Do not return markdown or explanatory text.
         `
-        }, {
+    }, {
         name: "Architecture",
         desc: "Design system architecture",
         icon: Network,
-        color: "text-orange-600",
-        bgColor: "bg-orange-50",
+        color: "text-orange-500 dark:text-orange-400",
+        bgColor: "bg-orange-500/10 dark:bg-orange-400/15",
         prompt: `
             You are a senior software architect and system design visualization agent.
 
@@ -187,13 +201,13 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
             - Use consistent spacing.
             - Use clean rows and columns.
             - Prefer simple layouts over complex layouts.
-            `,
-        }, {
+        `,
+    }, {
         name: "Web Mockup",
         desc: "Generate web wireframes",
         icon: Monitor,
-        color: "text-cyan-600",
-        bgColor: "bg-cyan-50",
+        color: "text-cyan-500 dark:text-cyan-400",
+        bgColor: "bg-cyan-500/10 dark:bg-cyan-400/15",
         prompt: `
         You are an expert product designer and web UI wireframe generation agent.
         Convert the user's description into a professional desktop web application wireframe.
@@ -225,12 +239,12 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
         Output only valid Excalidraw-compatible JSON elements.
         Do not return markdown or explanations.
         `
-        }, {
+    }, {
         name: "Mobile Mockup",
         desc: "Generate app wireframes",
         icon: Smartphone,
-        color: "text-pink-600",
-        bgColor: "bg-pink-50",
+        color: "text-pink-500 dark:text-pink-400",
+        bgColor: "bg-pink-500/10 dark:bg-pink-400/15",
         prompt: `
         You are an expert mobile product designer and mobile wireframe generation agent.
         Convert the user's app idea into a professional mobile app wireframe.
@@ -263,240 +277,265 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
         `
     }]
 
-    
-    const getEmptyCanvasPosition = () =>{
+    const getSettings = async (): Promise<WhiteboardSettings> => {
+        const response = await axios.get("/api/settings");
 
-        if (!excalidrawApi){
-            return {x : 100, y : 100};
+        if (!response.data?.settings) {
+            throw new Error("Settings not found");
         }
-
-        const elements = excalidrawApi.getSceneElements().filter(element => !element.isDeleted)
-    
-        if(elements.length == 0){
-            return {x: 100, y: 100};
-        }
-        const maxRight = Math.max(...elements.map((element) => element.x+element.width))
-
-        const minTop = Math.min(...elements.map((element) => element.y))
 
         return {
-            x : maxRight + 150,
-            y : minTop
+            ...defaultSettings,
+            ...response.data.settings,
+        };
+    };
+
+    const getEmptyCanvasPosition = () => {
+
+        if (!excalidrawApi) {
+            return { x: 100, y: 100 };
+        }
+
+        const elements = excalidrawApi
+            .getSceneElements()
+            .filter(element => !element.isDeleted)
+
+        if (elements.length == 0) {
+            return { x: 100, y: 100 };
+        }
+
+        const maxRight = Math.max(
+            ...elements.map(
+                (element) => element.x + element.width
+            )
+        )
+
+        const minTop = Math.min(
+            ...elements.map((element) => element.y)
+        )
+
+        return {
+            x: maxRight + 150,
+            y: minTop
         }
     }
 
+
     const addAiPlaceholder = () => {
-    if (!excalidrawApi) return null;
+        if (!excalidrawApi) return null;
 
-    const position = getEmptyCanvasPosition();
+        const position = getEmptyCanvasPosition();
 
-    const placeholderElements =
-        convertToExcalidrawElements([
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}background`,
-                type: 'rectangle',
+        const placeholderElements =
+            convertToExcalidrawElements([
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}background`,
+                    type: 'rectangle',
 
-                x: position.x,
-                y: position.y,
+                    x: position.x,
+                    y: position.y,
 
-                width: 450,
-                height: 250,
+                    width: 450,
+                    height: 250,
 
-                backgroundColor: '#f5f3ff',
-                strokeColor: '#8b5cf6',
+                    backgroundColor: '#f5f3ff',
+                    strokeColor: '#8b5cf6',
 
-                fillStyle: 'solid',
-                strokeWidth: 2,
+                    fillStyle: 'solid',
+                    strokeWidth: 2,
 
-                roundness: {
-                    type: 3,
+                    roundness: {
+                        type: 3,
+                    },
                 },
-            },
 
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}title`,
-                type: 'text',
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}title`,
+                    type: 'text',
 
-                x: position.x + 25,
-                y: position.y + 22,
+                    x: position.x + 25,
+                    y: position.y + 22,
 
-                text: '✨ AI is generating...',
+                    text: '✨ AI is generating...',
 
-                fontSize: 20,
-                fontFamily: 1,
+                    fontSize: 20,
+                    fontFamily: 1,
 
-                strokeColor: '#6d28d9',
-                backgroundColor: 'transparent',
-            },
-
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}bar-1`,
-                type: 'rectangle',
-
-                x: position.x + 25,
-                y: position.y + 70,
-
-                width: 180,
-                height: 14,
-
-                backgroundColor: '#ddd6fe',
-                strokeColor: 'transparent',
-
-                fillStyle: 'solid',
-                strokeWidth: 0,
-
-                roundness: {
-                    type: 3,
+                    strokeColor: '#6d28d9',
+                    backgroundColor: 'transparent',
                 },
-            },
 
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}bar-2`,
-                type: 'rectangle',
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}bar-1`,
+                    type: 'rectangle',
 
-                x: position.x + 25,
-                y: position.y + 105,
+                    x: position.x + 25,
+                    y: position.y + 70,
 
-                width: 350,
-                height: 12,
+                    width: 180,
+                    height: 14,
 
-                backgroundColor: '#e9e5ff',
-                strokeColor: 'transparent',
+                    backgroundColor: '#ddd6fe',
+                    strokeColor: 'transparent',
 
-                fillStyle: 'solid',
-                strokeWidth: 0,
+                    fillStyle: 'solid',
+                    strokeWidth: 0,
 
-                roundness: {
-                    type: 3,
+                    roundness: {
+                        type: 3,
+                    },
                 },
-            },
 
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}bar-3`,
-                type: 'rectangle',
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}bar-2`,
+                    type: 'rectangle',
 
-                x: position.x + 25,
-                y: position.y + 130,
+                    x: position.x + 25,
+                    y: position.y + 105,
 
-                width: 300,
-                height: 12,
+                    width: 350,
+                    height: 12,
 
-                backgroundColor: '#e9e5ff',
-                strokeColor: 'transparent',
+                    backgroundColor: '#e9e5ff',
+                    strokeColor: 'transparent',
 
-                fillStyle: 'solid',
-                strokeWidth: 0,
+                    fillStyle: 'solid',
+                    strokeWidth: 0,
 
-                roundness: {
-                    type: 3,
+                    roundness: {
+                        type: 3,
+                    },
                 },
-            },
 
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}bar-4`,
-                type: 'rectangle',
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}bar-3`,
+                    type: 'rectangle',
 
-                x: position.x + 25,
-                y: position.y + 155,
+                    x: position.x + 25,
+                    y: position.y + 130,
 
-                width: 330,
-                height: 12,
+                    width: 300,
+                    height: 12,
 
-                backgroundColor: '#e9e5ff',
-                strokeColor: 'transparent',
+                    backgroundColor: '#e9e5ff',
+                    strokeColor: 'transparent',
 
-                fillStyle: 'solid',
-                strokeWidth: 0,
+                    fillStyle: 'solid',
+                    strokeWidth: 0,
 
-                roundness: {
-                    type: 3,
+                    roundness: {
+                        type: 3,
+                    },
                 },
-            },
 
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}bar-5`,
-                type: 'rectangle',
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}bar-4`,
+                    type: 'rectangle',
 
-                x: position.x + 25,
-                y: position.y + 195,
+                    x: position.x + 25,
+                    y: position.y + 155,
 
-                width: 120,
-                height: 10,
+                    width: 330,
+                    height: 12,
 
-                backgroundColor: '#ddd6fe',
-                strokeColor: 'transparent',
+                    backgroundColor: '#e9e5ff',
+                    strokeColor: 'transparent',
 
-                fillStyle: 'solid',
-                strokeWidth: 0,
+                    fillStyle: 'solid',
+                    strokeWidth: 0,
 
-                roundness: {
-                    type: 3,
+                    roundness: {
+                        type: 3,
+                    },
                 },
-            },
 
-            {
-                id: `${AI_PLACEHOLDER_PREFIX}footer`,
-                type: 'text',
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}bar-5`,
+                    type: 'rectangle',
 
-                x: position.x + 25,
-                y: position.y + 215,
+                    x: position.x + 25,
+                    y: position.y + 195,
 
-                text: 'Creating your visual...',
+                    width: 120,
+                    height: 10,
 
-                fontSize: 13,
-                fontFamily: 1,
+                    backgroundColor: '#ddd6fe',
+                    strokeColor: 'transparent',
 
-                strokeColor: '#8b7bb8',
-                backgroundColor: 'transparent',
-            },
-        ]);
+                    fillStyle: 'solid',
+                    strokeWidth: 0,
 
-    const currentElements =
-        excalidrawApi.getSceneElements();
+                    roundness: {
+                        type: 3,
+                    },
+                },
 
-    excalidrawApi.updateScene({
-        elements: [
-            ...currentElements,
-            ...placeholderElements,
-        ],
-    });
+                {
+                    id: `${AI_PLACEHOLDER_PREFIX}footer`,
+                    type: 'text',
 
-    /*
-     * convertToExcalidrawElements may generate IDs instead of preserving
-     * the skeleton IDs above, so retain the actual IDs for cleanup.
-     */
-    return {
-        position,
-        placeholderIds: new Set(
-            placeholderElements.map((element) => element.id)
-        ),
+                    x: position.x + 25,
+                    y: position.y + 215,
+
+                    text: 'Creating your visual...',
+
+                    fontSize: 13,
+                    fontFamily: 1,
+
+                    strokeColor: '#8b7bb8',
+                    backgroundColor: 'transparent',
+                },
+            ]);
+
+        const currentElements =
+            excalidrawApi.getSceneElements();
+
+        excalidrawApi.updateScene({
+            elements: [
+                ...currentElements,
+                ...placeholderElements,
+            ],
+        });
+
+        /*
+         * convertToExcalidrawElements may generate IDs instead of preserving
+         * the skeleton IDs above, so retain the actual IDs for cleanup.
+         */
+        return {
+            position,
+            placeholderIds: new Set(
+                placeholderElements.map((element) => element.id)
+            ),
+        };
     };
-};
+
 
     const removeAiPlaceholder = () => {
-    if (!excalidrawApi) return;
+        if (!excalidrawApi) return;
 
-    const elements =
-        excalidrawApi.getSceneElements();
+        const elements =
+            excalidrawApi.getSceneElements();
 
-    const updatedElements =
-        elements.filter(
-            element =>
-                !element.id.startsWith(
-                    AI_PLACEHOLDER_PREFIX
-                )
-        );
+        const updatedElements =
+            elements.filter(
+                element =>
+                    !element.id.startsWith(
+                        AI_PLACEHOLDER_PREFIX
+                    )
+            );
 
-    excalidrawApi.updateScene({
-        elements: updatedElements,
-    });
-};
+        excalidrawApi.updateScene({
+            elements: updatedElements,
+        });
+    };
 
-    //find Right most element
+
+    // find Right most element
 
     const activeTool = Aitools.find(
         (tool) => tool.name === selectedTool
     )
+
 
     const onClickGenerate = async () => {
     const currentAiTool = AiPrompts.find(
@@ -518,57 +557,118 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
     try {
         setLoading(true);
 
-        // 1. Add placeholder and remember its position
+        // --------------------------------------------------
+        // 1. Get the LATEST settings from DB
+        // --------------------------------------------------
+
+        const settings = await getSettings();
+
+        console.log("AI generation settings:", settings);
+
+        // --------------------------------------------------
+        // 2. Apply canvas background + Excalidraw theme
+        // --------------------------------------------------
+
+        excalidrawApi.updateScene({
+            appState: {
+                ...excalidrawApi.getAppState(),
+                theme:
+                    settings.theme === "system"
+                        ? "light"
+                        : settings.theme,
+                viewBackgroundColor:
+                    settings.backgroundColor,
+            },
+        });
+
+        // --------------------------------------------------
+        // 3. Add placeholder
+        // --------------------------------------------------
+
         const placeholder = addAiPlaceholder();
 
         if (!placeholder) {
-            throw new Error("Could not create AI placeholder");
+            throw new Error(
+                "Could not create AI placeholder"
+            );
         }
 
-        const { position: placeholderPosition } = placeholder;
-        placeholderIds = placeholder.placeholderIds;
+        const {
+            position: placeholderPosition,
+        } = placeholder;
 
-        // 2. Generate diagram
-        const result = await axios.post("/api/ai", {
-            userInput,
-            type: currentAiTool.name,
-            prompt: currentAiTool.prompt,
-        });
+        placeholderIds =
+            placeholder.placeholderIds;
 
-        const diagramResult = result.data.diagramResult;
+        // --------------------------------------------------
+        // 4. Generate diagram
+        // --------------------------------------------------
 
-        console.log("AI Diagram:", diagramResult);
+        const result = await axios.post(
+            "/api/ai",
+            {
+                userInput,
+                type: currentAiTool.name,
+                prompt: currentAiTool.prompt,
+            }
+        );
 
-        // 3. Convert generated diagram using placeholder position
+        const diagramResult =
+            result.data.diagramResult;
+
+        console.log(
+            "AI Diagram:",
+            diagramResult
+        );
+
+        // --------------------------------------------------
+        // 5. Convert using DB settings
+        // --------------------------------------------------
+
         const generatedElements =
             convertDiagramToExcalidraw(
                 diagramResult,
                 {
-                    offsetX: placeholderPosition.x,
-                    offsetY: placeholderPosition.y,
+                    offsetX:
+                        placeholderPosition.x,
+
+                    offsetY:
+                        placeholderPosition.y,
+
+                    diagramColor:
+                        settings.diagramColor,
+
+                    strokeWidth:
+                        settings.strokeWidth,
+
+                    backgroundColor:
+                        settings.backgroundColor,
                 }
             );
 
-        // 4. Get the CURRENT scene
+        // --------------------------------------------------
+        // 6. Get CURRENT scene
+        // --------------------------------------------------
+
         const currentElements =
             excalidrawApi.getSceneElements();
 
-        // 5. Remove every placeholder element
+        // --------------------------------------------------
+        // 7. Remove placeholder
+        // --------------------------------------------------
+
         const elementsWithoutPlaceholder =
             currentElements.filter(
                 element =>
-                    !placeholderIds?.has(element.id)
+                    !placeholderIds?.has(
+                        element.id
+                    )
             );
 
-        console.log(
-            "Placeholder elements found:",
-            currentElements
-                .filter(element => placeholderIds?.has(element.id))
-                .map(element => element.id)
-        );
+        // --------------------------------------------------
+        // 8. Insert generated diagram
+        // --------------------------------------------------
 
-        // 6. ONE update:
-        // remove placeholder + insert diagram
         excalidrawApi.updateScene({
             elements: [
                 ...elementsWithoutPlaceholder,
@@ -578,14 +678,20 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
 
     } catch (error) {
 
-        // If generation fails, remove placeholder
+        // --------------------------------------------------
+        // Remove placeholder if generation fails
+        // --------------------------------------------------
+
         if (excalidrawApi) {
             const currentElements =
                 excalidrawApi.getSceneElements();
 
             const cleanedElements =
                 currentElements.filter(
-                    element => !placeholderIds?.has(element.id)
+                    element =>
+                        !placeholderIds?.has(
+                            element.id
+                        )
                 );
 
             excalidrawApi.updateScene({
@@ -610,11 +716,12 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
         setLoading(false);
     }
 };
+
     return (
-        <div className="absolute right-6 bottom-24 z-50 flex w-95 max-h-155 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
+        <div className="absolute right-6 bottom-24 z-50 flex w-95 max-h-155 flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
 
             {/* Header */}
-            <div className="border-b border-gray-100 px-5 py-4">
+            <div className="border-b border-border px-5 py-4">
                 <div className="flex items-start justify-between">
                     <div>
                         <div className="flex items-center gap-2">
@@ -622,19 +729,19 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                                 <Sparkles size={17} />
                             </div>
 
-                            <h2 className="text-base font-semibold text-gray-900">
+                            <h2 className="text-base font-semibold text-foreground">
                                 AI Helper
                             </h2>
                         </div>
 
-                        <p className="mt-1 text-xs text-gray-400">
+                        <p className="mt-1 text-xs text-muted-foreground">
                             Turn ideas into visuals in seconds
                         </p>
                     </div>
 
                     <button
                         type="button"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
                         onClick={onClose}
                     >
                         <X size={18} />
@@ -644,7 +751,7 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
 
             {/* AI Tools */}
             <div className="flex-1 overflow-y-auto px-4 py-4">
-                <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     AI Tools
                 </p>
 
@@ -676,8 +783,8 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                                     duration-150
                                     ${
                                         isSelected
-                                            ? 'border-blue-200 bg-blue-50'
-                                            : 'border-transparent hover:border-gray-200 hover:bg-gray-50'
+                                            ? 'border-primary/30 bg-primary/10'
+                                            : 'border-transparent hover:border-border hover:bg-muted'
                                     }
                                 `}
                             >
@@ -702,15 +809,15 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                                             text-sm font-medium
                                             ${
                                                 isSelected
-                                                    ? 'text-blue-700'
-                                                    : 'text-gray-800'
+                                                    ? 'text-primary'
+                                                    : 'text-foreground'
                                             }
                                         `}
                                     >
                                         {tool.name}
                                     </h3>
 
-                                    <p className="mt-0.5 truncate text-xs text-gray-400">
+                                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
                                         {tool.desc}
                                     </p>
                                 </div>
@@ -721,8 +828,8 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                                         shrink-0 transition-all
                                         ${
                                             isSelected
-                                                ? 'translate-x-0.5 text-blue-500'
-                                                : 'text-gray-300 group-hover:translate-x-0.5 group-hover:text-gray-500'
+                                                ? 'translate-x-0.5 text-primary'
+                                                : 'text-muted-foreground group-hover:translate-x-0.5 group-hover:text-foreground'
                                         }
                                     `}
                                 />
@@ -733,21 +840,22 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
             </div>
 
             {/* Prompt Area */}
-            <div className="border-t border-gray-100 bg-gray-50/70 p-4">
+            <div className="border-t border-border bg-muted/70 p-4">
                 <div className="mb-2">
-                    <h3 className="text-sm font-medium text-gray-800">
+                    <h3 className="text-sm font-medium text-foreground">
                         Describe what you want to create
                     </h3>
 
-                    <p className="mt-0.5 text-xs text-gray-400">
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                         Tell AI what you want to visualize
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm focus-within:ring-1 focus-within:ring-blue-500">
+                <div className="rounded-xl border border-border bg-background shadow-sm focus-within:ring-1 focus-within:ring-primary">
 
                     {/* Textarea */}
                     <Textarea
+                        autoFocus
                         placeholder="e.g. Generate a system architecture for WhatsApp"
                         className="
                             min-h-20
@@ -765,7 +873,7 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                         {/* Selected Tool */}
                         <div className="min-w-0 flex-1">
                             {activeTool && (
-                                <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1">
+                                <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-muted px-2 py-1">
 
                                     <div
                                         className={`
@@ -785,14 +893,14 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                                         />
                                     </div>
 
-                                    <span className="truncate text-xs font-medium text-gray-600">
+                                    <span className="truncate text-xs font-medium text-muted-foreground">
                                         {activeTool.name}
                                     </span>
 
                                     <button
                                         type="button"
                                         onClick={() => setSelectedTool(null)}
-                                        className="ml-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+                                        className="ml-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted-foreground/20 hover:text-foreground"
                                     >
                                         <X size={11} />
                                     </button>
@@ -813,15 +921,18 @@ const AISidebar = ({excalidrawApi, onClose} : Props) => {
                                 bg-gradient-to-r
                                 from-blue-600
                                 to-purple-600
+                                text-white
                                 hover:opacity-90
                                 disabled:cursor-not-allowed
                                 disabled:opacity-50
                             "
-
-                            disabled = {loading}
+                            disabled={loading}
                             onClick={onClickGenerate}
                         >
-                           {loading && <Loader2Icon className='animate-spin' />} <Sparkles size={14} />
+                            {loading && (
+                                <Loader2Icon className="animate-spin" />
+                            )}
+                            <Sparkles size={14} />
                             Generate
                         </Button>
                     </div>

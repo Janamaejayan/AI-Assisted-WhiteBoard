@@ -238,8 +238,8 @@ function FloatingProperties({
                 -translate-y-full
                 rounded-2xl
                 border
-                border-slate-200
-                bg-white/95
+                border-border
+                bg-background/95
                 p-1
                 shadow-[0_12px_35px_rgba(15,23,42,0.14)]
                 backdrop-blur-xl
@@ -276,10 +276,10 @@ function FloatingProperties({
                     items-center
                     justify-center
                     rounded-lg
-                    text-slate-400
+                    text-muted-foreground
                     transition
-                    hover:bg-slate-100
-                    hover:text-slate-700
+                    hover:bg-muted
+                    hover:text-foreground
                     active:cursor-grabbing
                 "
             >
@@ -336,7 +336,7 @@ function FloatingProperties({
                             w-[220px]
                             rounded-xl
                             border
-                            border-slate-200
+                            border-border
                             p-2.5
                             shadow-xl
                         "
@@ -387,7 +387,7 @@ function FloatingProperties({
                                         -translate-x-1/2
                                         rounded-full
                                         border
-                                        border-slate-200
+                                        border-border
                                     "
                                     style={{
                                         backgroundColor:
@@ -411,7 +411,7 @@ function FloatingProperties({
                             w-[220px]
                             rounded-xl
                             border
-                            border-slate-200
+                            border-border
                             p-2.5
                             shadow-xl
                         "
@@ -458,10 +458,10 @@ function FloatingProperties({
                                 justify-center
                                 rounded-lg
                                 border
-                                border-slate-200
+                                border-border
                                 text-xs
-                                text-slate-600
-                                hover:bg-slate-50
+                                text-foreground
+                                hover:bg-muted
                             "
                         >
                             No fill
@@ -598,8 +598,8 @@ function FloatingProperties({
                                             ${
                                                 selectedElement.strokeWidth ===
                                                 width
-                                                    ? "border-blue-300 bg-blue-50"
-                                                    : "border-slate-200 hover:bg-slate-50"
+                                                    ? "border-primary/30 bg-primary/10"
+                                                    : "border-border hover:bg-muted"
                                             }
                                         `}
                                     >
@@ -680,14 +680,14 @@ function FloatingProperties({
                         overflow-hidden
                         rounded-2xl
                         border
-                        border-slate-200
-                        bg-white
+                        border-border
+                        bg-background
                         p-0
                         shadow-[0_18px_50px_rgba(15,23,42,0.18)]
                     "
                 >
                     <div className="flex h-9 items-center justify-between px-2.5">
-                        <span className="text-[13px] font-semibold text-slate-900">
+                        <span className="text-[13px] font-semibold text-foreground">
                             {getMoreTitle()}
                         </span>
 
@@ -703,9 +703,9 @@ function FloatingProperties({
                                 items-center
                                 justify-center
                                 rounded-md
-                                text-slate-400
-                                hover:bg-slate-100
-                                hover:text-slate-900
+                                text-muted-foreground
+                                hover:bg-muted
+                                hover:text-foreground
                             "
                         >
                             <X size={14} />
@@ -901,12 +901,12 @@ function TextOptions({
                                 w-full
                                 rounded-lg
                                 border
-                                border-slate-200
-                                bg-white
+                                border-border
+                                bg-background
                                 px-2
                                 text-xs
                                 outline-none
-                                focus:border-blue-400
+                                focus:border-primary
                             "
                         >
                             {[12, 16, 20, 24, 32, 40, 48, 64].map(
@@ -1028,7 +1028,7 @@ function ShapeOptions({
                         Stroke
                     </PropertyLabel>
 
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-muted-foreground">
                         Style & width
                     </span>
                 </div>
@@ -1085,9 +1085,9 @@ function ShapeOptions({
                             justify-center
                             rounded-md
                             border
-                            border-slate-200
-                            text-slate-400
-                            hover:bg-slate-50
+                            border-border
+                            text-muted-foreground
+                            hover:bg-muted
                         "
                     >
                         <X size={13} />
@@ -1290,12 +1290,12 @@ function StrokeControls({
                     w-full
                     rounded-lg
                     border
-                    border-slate-200
-                    bg-white
+                    border-border
+                    bg-background
                     px-2
                     text-xs
                     outline-none
-                    focus:border-blue-400
+                    focus:border-primary
                 "
             >
                 <option value={1}>
@@ -1330,8 +1330,8 @@ function StrokeControls({
                         transition
                         ${
                             isSharpShape
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-foreground hover:border-border hover:bg-muted"
                         }
                     `}
                 >
@@ -1358,8 +1358,8 @@ function StrokeControls({
                         transition
                         ${
                             !isSharpShape
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-foreground hover:border-border hover:bg-muted"
                         }
                     `}
                 >
@@ -1387,7 +1387,7 @@ function OpacityControl({
                     Opacity
                 </PropertyLabel>
 
-                <span className="text-[10px] font-medium text-slate-400">
+                <span className="text-[10px] font-medium text-muted-foreground">
                     {selectedElement.opacity ??
                         100}
                     %
@@ -1429,15 +1429,14 @@ function ToolbarButton({
     danger = false,
     title,
     onClick,
-}: {
-    children: React.ReactNode
+    ...buttonProps
+}: React.ComponentPropsWithRef<'button'> & {
     active?: boolean
     danger?: boolean
-    title?: string
-    onClick?: () => void
 }) {
     return (
         <button
+            {...buttonProps}
             type="button"
             title={title}
             onClick={onClick}
@@ -1454,8 +1453,8 @@ function ToolbarButton({
                     danger
                         ? "text-red-500 hover:bg-red-50 hover:text-red-600"
                         : active
-                            ? "bg-slate-100 text-slate-900"
-                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                            ? "bg-muted text-foreground"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
                 }
             `}
         >
@@ -1485,15 +1484,15 @@ function QuickAction({
                 gap-1.5
                 rounded-lg
                 border
-                border-slate-200
+                border-border
                 px-2
                 text-[10px]
                 font-medium
-                text-slate-600
+                text-foreground
                 transition
-                hover:border-slate-300
-                hover:bg-slate-50
-                hover:text-slate-900
+                hover:border-border
+                hover:bg-muted
+                hover:text-foreground
             "
         >
             {icon}
@@ -1529,8 +1528,8 @@ function TextOptionButton({
                 transition
                 ${
                     active
-                        ? "border-blue-300 bg-blue-50 text-blue-600"
-                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "border-primary/30 bg-primary/10 text-primary"
+                        : "border-border text-foreground hover:bg-muted"
                 }
             `}
         >
@@ -1562,8 +1561,8 @@ function TextIconButton({
                 transition
                 ${
                     active
-                        ? "border-blue-300 bg-blue-50 text-blue-600"
-                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "border-primary/30 bg-primary/10 text-primary"
+                        : "border-border text-foreground hover:bg-muted"
                 }
             `}
         >
@@ -1595,8 +1594,8 @@ function MiniButton({
                 transition
                 ${
                     active
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-slate-600 hover:bg-slate-100"
+                        ? "bg-primary/10 text-primary"
+                        : "text-foreground hover:bg-muted"
                 }
             `}
         >
@@ -1627,7 +1626,7 @@ function ColorCircle({
                 justify-center
                 rounded-full
                 border
-                border-slate-200
+                border-border
                 transition
                 hover:scale-110
             "
@@ -1671,8 +1670,8 @@ function ColorSquare({
                 hover:scale-110
                 ${
                     active
-                        ? "border-blue-400 ring-1 ring-blue-200"
-                        : "border-slate-200"
+                        ? "border-primary ring-1 ring-primary/20"
+                        : "border-border"
                 }
             `}
             style={{
@@ -1715,8 +1714,8 @@ function StrokeStyleButton({
                 transition
                 ${
                     selected
-                        ? "border-blue-300 bg-blue-50"
-                        : "border-slate-200 hover:bg-slate-50"
+                        ? "border-primary/30 bg-primary/10"
+                        : "border-border hover:bg-muted"
                 }
             `}
         >
@@ -1748,7 +1747,7 @@ function PropertyLabel({
             className="
                 text-[11px]
                 font-semibold
-                text-slate-500
+                text-muted-foreground
             "
         >
             {children}
@@ -1787,7 +1786,7 @@ function ToolbarDivider() {
                 mx-0.5
                 h-6
                 w-px
-                bg-slate-200
+                bg-border
             "
         />
     )
@@ -1795,8 +1794,8 @@ function ToolbarDivider() {
 
 function SectionDivider() {
     return (
-        <div className="h-px bg-slate-100" />
+        <div className="h-px bg-muted" />
     )
 }
 
-export default FloatingProperties 
+export default FloatingProperties

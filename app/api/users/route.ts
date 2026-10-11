@@ -1,30 +1,111 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
-import { db, users } from "@/db";
+import { NextResponse } from "next/server";
+import {
+  db,
+  users,
+  userSettings,
+} from "@/db";
 import { eq } from "drizzle-orm";
 
-export async function POST(req: NextRequest){
+export async function POST() {
+  try {
     const user = await currentUser();
 
-    //Check for user existence
+    // --------------------------------------------------
+    // Check Clerk user
+    // --------------------------------------------------
 
-    if(user){
-        const userData = await db.select().from(users)
-
-        //@ts-ignore
-        .where(eq(user.primaryEmailAddress?.emailAddress, users.email))
-
-        if(userData?.length > 0){
-            return NextResponse.json(userData[0]);
-        }else{
-            const result = await db.insert(users).values({
-                name : user?.fullName,
-                email: user?.primaryEmailAddress?.emailAddress ?? '', 
-            }).returning();
-
-            return NextResponse.json(result[0]);
-        }
+    if (!user) {
+      return NextResponse.json(
+        { message: "User Not Found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({message : "User Not Found"}, {status: 404});
+    const email =
+      user.primaryEmailAddress?.emailAddress;
+
+    if (!email) {
+      return NextResponse.json(
+        { message: "User email not found" },
+        { status: 400 }
+      );
+    }
+
+    // --------------------------------------------------
+    // Check if user already exists
+    // --------------------------------------------------
+
+    const userData = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    // --------------------------------------------------
+    // EXISTING USER
+    // --------------------------------------------------
+
+    if (userData.length > 0) {
+      const existingUser = userData[0];
+
+      // Make sure existing user has settings
+      const existingSettings = await db
+        .select()
+        .from(userSettings)
+        .where(
+          eq(
+            userSettings.userId,
+            existingUser.id
+          )
+        )
+        .limit(1);
+
+      // If settings don't exist, create them
+      // Schema defaults will be used automatically
+      if (existingSettings.length === 0) {
+        await db.insert(userSettings).values({
+          userId: existingUser.id,
+        });
+      }
+
+      return NextResponse.json(existingUser);
+    }
+
+    // --------------------------------------------------
+    // NEW USER
+    // --------------------------------------------------
+
+    const result = await db
+      .insert(users)
+      .values({
+        name: user.fullName,
+        email: email,
+      })
+      .returning();
+
+    const newUser = result[0];
+
+    // --------------------------------------------------
+    // CREATE DEFAULT SETTINGS
+    // --------------------------------------------------
+
+    await db.insert(userSettings).values({
+      userId: newUser.id,
+    });
+
+    return NextResponse.json(newUser);
+  } catch (error) {
+    console.error(
+      "POST /api/users error:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        message: "Failed to create/fetch user",
+      },
+      { status: 500 }
+    );
+  }
 }

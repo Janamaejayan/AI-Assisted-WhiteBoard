@@ -17,13 +17,13 @@ import {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-white text-slate-950">
+    <main className="min-h-screen overflow-hidden bg-background text-foreground">
 
       {/* =====================================================
           NAVBAR
       ===================================================== */}
 
-      <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">
 
           <Link
@@ -48,25 +48,25 @@ export default function HomePage() {
           </Link>
 
 
-          <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
+          <nav className="hidden items-center gap-8 text-sm text-foreground md:flex">
 
             <a
               href="#features"
-              className="transition hover:text-indigo-600"
+              className="transition hover:text-primary"
             >
               Features
             </a>
 
             <a
               href="#ai"
-              className="transition hover:text-indigo-600"
+              className="transition hover:text-primary"
             >
               AI
             </a>
 
             <a
               href="#how-it-works"
-              className="transition hover:text-indigo-600"
+              className="transition hover:text-primary"
             >
               How it works
             </a>
@@ -84,9 +84,9 @@ export default function HomePage() {
                 py-2.5
                 text-sm
                 font-medium
-                text-slate-700
+                text-foreground
                 transition
-                hover:bg-slate-100
+                hover:bg-muted
               "
             >
               Log in
@@ -186,13 +186,13 @@ export default function HomePage() {
                 gap-2
                 rounded-full
                 border
-                border-indigo-200
-                bg-indigo-50
+                border-indigo-200 dark:border-indigo-400/20
+                bg-indigo-50 dark:bg-indigo-400/10
                 px-4
                 py-2
                 text-xs
                 font-semibold
-                text-indigo-700
+                text-indigo-700 dark:text-indigo-200
               ">
                 <Sparkles size={14} />
                 AI-powered collaborative whiteboard
@@ -206,7 +206,7 @@ export default function HomePage() {
                 font-bold
                 leading-[1.02]
                 tracking-[-0.045em]
-                text-slate-950
+                text-foreground
                 sm:text-6xl
                 lg:text-[68px]
               ">
@@ -231,7 +231,7 @@ export default function HomePage() {
                 max-w-xl
                 text-base
                 leading-7
-                text-slate-600
+                text-foreground
                 sm:text-lg
               ">
                 WhizBoard brings AI-assisted diagram generation,
@@ -277,18 +277,18 @@ export default function HomePage() {
                     justify-center
                     rounded-xl
                     border
-                    border-slate-200
-                    bg-white
+                    border-border
+                    bg-background
                     px-6
                     py-3.5
                     text-sm
                     font-semibold
-                    text-slate-700
+                    text-foreground
                     shadow-sm
                     transition
                     hover:border-indigo-200
-                    hover:bg-indigo-50
-                    hover:text-indigo-700
+                    hover:bg-indigo-50 dark:hover:bg-indigo-400/10
+                    hover:text-indigo-700 dark:hover:text-indigo-200
                   "
                 >
                   Explore WhizBoard
@@ -336,7 +336,7 @@ export default function HomePage() {
                 rounded-3xl
                 border
                 border-indigo-100
-                bg-white
+                bg-background
                 shadow-[0_30px_100px_rgba(79,70,229,0.16)]
               ">
 
@@ -348,8 +348,8 @@ export default function HomePage() {
                   items-center
                   justify-between
                   border-b
-                  border-slate-200
-                  bg-white
+                  border-border
+                  bg-background
                   px-4
                 ">
 
@@ -363,11 +363,11 @@ export default function HomePage() {
 
                   <div className="
                     rounded-md
-                    bg-slate-100
+                    bg-muted
                     px-4
                     py-1
                     text-[10px]
-                    text-slate-500
+                    text-muted-foreground
                   ">
                     WhizBoard workspace
                   </div>
@@ -411,8 +411,8 @@ export default function HomePage() {
                     z-10
                     rounded-2xl
                     border
-                    border-slate-200
-                    bg-white/95
+                    border-border
+                    bg-background/95
                     p-2
                     shadow-lg
                   ">
@@ -437,13 +437,13 @@ export default function HomePage() {
                     gap-2
                     rounded-full
                     border
-                    border-violet-200
-                    bg-violet-50
+                    border-violet-200 dark:border-violet-400/20
+                    bg-violet-50 dark:bg-violet-400/10
                     px-3
                     py-2
                     text-xs
                     font-semibold
-                    text-violet-700
+                    text-violet-700 dark:text-violet-200
                     shadow-sm
                   ">
                     <Sparkles size={13} />
@@ -559,7 +559,7 @@ export default function HomePage() {
                           AI Helper
                         </p>
 
-                        <p className="text-[10px] text-slate-400">
+                        <p className="text-[10px] text-muted-foreground">
                           Describe what you want to create
                         </p>
 
@@ -570,11 +570,11 @@ export default function HomePage() {
                     <div className="
                       mt-3
                       rounded-xl
-                      bg-white/10
+                      bg-background/10
                       px-3
                       py-2.5
                       text-xs
-                      text-slate-200
+                      text-muted-foreground
                     ">
                       Create a system architecture for an
                       e-commerce application...
@@ -601,7 +601,7 @@ export default function HomePage() {
 
       <section
         id="features"
-        className="border-y border-slate-200 bg-slate-50"
+        className="border-y border-border bg-muted/40"
       >
 
         <div className="mx-auto max-w-7xl px-6 py-20">
@@ -613,12 +613,12 @@ export default function HomePage() {
               inline-flex
               items-center
               rounded-full
-              bg-indigo-100
+              bg-indigo-100 dark:bg-indigo-400/15
               px-3
               py-1.5
               text-xs
               font-semibold
-              text-indigo-700
+              text-indigo-700 dark:text-indigo-200
             ">
               Everything you need
             </div>
@@ -631,12 +631,12 @@ export default function HomePage() {
               sm:text-4xl
             ">
               A better canvas for
-              <span className="text-indigo-600">
+              <span className="text-indigo-600 dark:text-indigo-300">
                 {" "}better ideas.
               </span>
             </h2>
 
-            <p className="mt-4 text-sm leading-6 text-slate-600">
+            <p className="mt-4 text-sm leading-6 text-foreground">
               From quick sketches to complex system designs,
               WhizBoard keeps your ideas visual and organized.
             </p>
@@ -654,14 +654,14 @@ export default function HomePage() {
 
             <FeatureCard
               icon={<Sparkles />}
-              iconClass="bg-violet-100 text-violet-600"
+              iconClass="bg-violet-500/10 dark:bg-violet-400/15 text-violet-600 dark:text-violet-300"
               title="AI-powered creation"
               description="Describe a diagram in natural language and turn it into editable visual elements."
             />
 
             <FeatureCard
               icon={<Users />}
-              iconClass="bg-blue-100 text-blue-600"
+              iconClass="bg-primary/15 text-primary"
               title="Live collaboration"
               description="Work together on boards and keep everyone aligned in the same workspace."
             />
@@ -704,12 +704,12 @@ export default function HomePage() {
                 items-center
                 gap-2
                 rounded-lg
-                bg-violet-100
+                bg-violet-500/10 dark:bg-violet-400/15
                 px-3
                 py-2
                 text-xs
                 font-semibold
-                text-violet-700
+                text-violet-700 dark:text-violet-200
               ">
                 <BrainCircuit size={15} />
                 AI assistance
@@ -725,7 +725,7 @@ export default function HomePage() {
                 Explain it.
                 <br />
 
-                <span className="text-violet-600">
+                <span className="text-violet-600 dark:text-violet-300">
                   WhizBoard visualizes it.
                 </span>
               </h2>
@@ -735,7 +735,7 @@ export default function HomePage() {
                 max-w-lg
                 text-base
                 leading-7
-                text-slate-600
+                text-foreground
               ">
                 Ask WhizBoard to build a flowchart, system
                 architecture, process diagram or visual
@@ -760,11 +760,11 @@ export default function HomePage() {
             <div className="
               rounded-3xl
               border
-              border-violet-100
+              border-violet-100 dark:border-violet-400/20
               bg-gradient-to-br
-              from-indigo-50
-              via-white
-              to-violet-50
+              from-indigo-50 dark:from-indigo-400/10
+              via-white dark:via-card
+              to-violet-50 dark:to-violet-400/10
               p-6
               shadow-xl
               shadow-violet-100/40
@@ -773,8 +773,8 @@ export default function HomePage() {
               <div className="
                 rounded-2xl
                 border
-                border-slate-200
-                bg-white
+                border-border
+                bg-background
                 p-5
                 shadow-sm
               ">
@@ -801,7 +801,7 @@ export default function HomePage() {
                       AI Helper
                     </p>
 
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Generate a diagram
                     </p>
                   </div>
@@ -813,12 +813,12 @@ export default function HomePage() {
                   mt-5
                   rounded-xl
                   border
-                  border-slate-200
-                  bg-slate-50
+                  border-border
+                  bg-muted/60
                   p-4
                   text-sm
                   leading-6
-                  text-slate-700
+                  text-foreground
                 ">
                   Create a system architecture diagram
                   containing a user, frontend, API gateway,
@@ -868,10 +868,10 @@ export default function HomePage() {
         id="how-it-works"
         className="
           border-y
-          border-slate-200
+          border-border
           bg-gradient-to-b
-          from-slate-50
-          to-white
+          from-slate-50 dark:from-muted/50
+          to-white dark:to-background
         "
       >
 
@@ -879,7 +879,7 @@ export default function HomePage() {
 
           <div className="text-center">
 
-            <p className="text-sm font-semibold text-indigo-600">
+            <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-300">
               SIMPLE WORKFLOW
             </p>
 
@@ -958,7 +958,7 @@ export default function HomePage() {
             h-64
             w-64
             rounded-full
-            bg-white/10
+            bg-background/10
             blur-3xl
           />
 
@@ -1032,7 +1032,7 @@ export default function HomePage() {
           FOOTER
       ===================================================== */}
 
-      <footer className="border-t border-slate-200 bg-white">
+      <footer className="border-t border-border bg-background">
 
         <div className="
           mx-auto
@@ -1043,7 +1043,7 @@ export default function HomePage() {
           px-6
           py-8
           text-sm
-          text-slate-500
+          text-muted-foreground
           sm:flex-row
           sm:items-center
           sm:justify-between
@@ -1060,7 +1060,7 @@ export default function HomePage() {
               height={25}
             />
 
-            <span className="font-semibold text-slate-800">
+            <span className="font-semibold text-foreground">
               WhizBoard
             </span>
           </Link>
@@ -1088,7 +1088,7 @@ function MiniCheck({
   text: string
 }) {
   return (
-    <div className="flex items-center gap-2 text-xs text-slate-600">
+    <div className="flex items-center gap-2 text-xs text-foreground">
 
       <span className="
         flex
@@ -1116,7 +1116,7 @@ function CheckItem({
   text: string
 }) {
   return (
-    <div className="flex items-center gap-3 text-sm text-slate-700">
+    <div className="flex items-center gap-3 text-sm text-foreground">
 
       <span className="
         flex
@@ -1153,8 +1153,8 @@ function FeatureCard({
     <div className="
       rounded-2xl
       border
-      border-slate-200
-      bg-white
+      border-border
+      bg-background
       p-6
       shadow-sm
       transition
@@ -1182,7 +1182,7 @@ function FeatureCard({
         mt-2
         text-sm
         leading-6
-        text-slate-500
+        text-muted-foreground
       ">
         {description}
       </p>
@@ -1207,8 +1207,8 @@ function Step({
     <div className="
       rounded-2xl
       border
-      border-slate-200
-      bg-white
+      border-border
+      bg-background
       p-7
       shadow-sm
     ">
@@ -1237,7 +1237,7 @@ function Step({
         mt-2
         text-sm
         leading-6
-        text-slate-500
+        text-muted-foreground
       ">
         {description}
       </p>
@@ -1271,7 +1271,7 @@ function DiagramNode({
   }
 
   const dots = {
-    blue: "bg-blue-500",
+    blue: "bg-primary",
     violet: "bg-violet-500",
     cyan: "bg-cyan-500",
     green: "bg-emerald-500",
@@ -1300,13 +1300,13 @@ function DiagramNode({
             ${dots[color]}
           `} />
 
-          <span className="text-xs font-semibold text-slate-800">
+          <span className="text-xs font-semibold text-slate-900">
             {title}
           </span>
 
         </div>
 
-        <p className="mt-1 text-[10px] text-slate-500">
+        <p className="mt-1 text-[10px] text-muted-foreground">
           {subtitle}
         </p>
 
@@ -1354,8 +1354,8 @@ function ToolIcon({
       rounded-lg
       ${
         active
-          ? "bg-indigo-100 text-indigo-600"
-          : "text-slate-500 hover:bg-slate-100"
+          ? "bg-indigo-100 text-indigo-700"
+          : "text-muted-foreground hover:bg-muted"
       }
     `}>
       {icon}

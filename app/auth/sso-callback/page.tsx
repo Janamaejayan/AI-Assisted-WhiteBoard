@@ -190,15 +190,15 @@ export default function SSOCallbackPage() {
           animate-spin
           rounded-full
           border-2
-          border-gray-200
+          border-border
           border-t-gray-950"
         />
 
-        <h1 className="text-sm font-semibold text-gray-900">
+        <h1 className="text-sm font-semibold text-foreground">
           Signing you in...
         </h1>
 
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-muted-foreground">
           Completing authentication.
         </p>
 

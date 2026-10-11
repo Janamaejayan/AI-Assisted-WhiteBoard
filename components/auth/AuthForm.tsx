@@ -940,8 +940,8 @@ export default function AuthForm({
         overflow-hidden
         rounded-3xl
         border
-        border-indigo-100
-        bg-white
+        border-indigo-100 dark:border-border
+        bg-background
         shadow-[0_25px_80px_rgba(79,70,229,0.14)]
       ">
 
@@ -992,12 +992,12 @@ export default function AuthForm({
                 font-semibold
                 uppercase
                 tracking-wider
-                text-indigo-600
+                text-indigo-600 dark:text-indigo-300
               ">
                 WhizBoard
               </p>
 
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Visualize your ideas
               </p>
 
@@ -1011,7 +1011,7 @@ export default function AuthForm({
             text-2xl
             font-bold
             tracking-tight
-            text-slate-950
+            text-foreground
           ">
             {step === "verify-email"
               ? "Verify your email"
@@ -1031,7 +1031,7 @@ export default function AuthForm({
             mt-2
             text-sm
             leading-6
-            text-slate-500
+            text-muted-foreground
           ">
 
             {step === "verify-email"
@@ -1074,7 +1074,7 @@ export default function AuthForm({
               grid
               grid-cols-2
               rounded-xl
-              bg-indigo-50
+              bg-indigo-50 dark:bg-primary/10
               p-1
             ">
 
@@ -1091,8 +1091,8 @@ export default function AuthForm({
                   transition-all
                   ${
                     mode === "signin"
-                      ? "bg-white text-indigo-700 shadow-sm"
-                      : "text-slate-500 hover:text-slate-800"
+                      ? "bg-background text-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }
                 `}
               >
@@ -1113,8 +1113,8 @@ export default function AuthForm({
                   transition-all
                   ${
                     mode === "signup"
-                      ? "bg-white text-violet-700 shadow-sm"
-                      : "text-slate-500 hover:text-slate-800"
+                      ? "bg-background text-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }
                 `}
               >
@@ -1141,9 +1141,9 @@ export default function AuthForm({
                 gap-2
                 text-xs
                 font-medium
-                text-slate-500
+                text-muted-foreground
                 transition
-                hover:text-indigo-600
+                hover:text-indigo-600 dark:hover:text-indigo-300
               "
             >
               <ArrowLeft size={14} />
@@ -1201,19 +1201,19 @@ export default function AuthForm({
 
               <div className="my-6 flex items-center gap-3">
 
-                <div className="h-px flex-1 bg-slate-200" />
+                <div className="h-px flex-1 bg-border" />
 
                 <span className="
                   whitespace-nowrap
                   text-[10px]
                   font-semibold
                   tracking-wider
-                  text-slate-400
+                  text-muted-foreground
                 ">
                   OR CONTINUE WITH EMAIL
                 </span>
 
-                <div className="h-px flex-1 bg-slate-200" />
+                <div className="h-px flex-1 bg-border" />
 
               </div>
 
@@ -1240,7 +1240,7 @@ export default function AuthForm({
                       block
                       text-sm
                       font-semibold
-                      text-slate-700
+                      text-foreground
                     "
                   >
                     Email
@@ -1256,7 +1256,7 @@ export default function AuthForm({
                         left-3
                         top-1/2
                         -translate-y-1/2
-                        text-slate-400
+                        text-muted-foreground
                       "
                     />
 
@@ -1276,16 +1276,16 @@ export default function AuthForm({
                         w-full
                         rounded-xl
                         border
-                        border-slate-200
-                        bg-white
+                        border-border
+                        bg-background
                         pl-10
                         pr-3
                         text-sm
-                        text-slate-900
+                        text-foreground
                         outline-none
                         transition
-                        placeholder:text-slate-400
-                        hover:border-slate-300
+                        placeholder:text-muted-foreground
+                        hover:border-border
                         focus:border-indigo-400
                         focus:ring-4
                         focus:ring-indigo-100
@@ -1313,7 +1313,7 @@ export default function AuthForm({
                       className="
                         text-sm
                         font-semibold
-                        text-slate-700
+                        text-foreground
                       "
                     >
                       Password
@@ -1334,9 +1334,9 @@ export default function AuthForm({
                         className="
                           text-xs
                           font-medium
-                          text-indigo-600
+                          text-indigo-600 dark:text-indigo-300
                           transition
-                          hover:text-violet-600
+                          hover:text-violet-600 dark:hover:text-violet-300
                         "
                       >
                         Forgot password?
@@ -1356,7 +1356,7 @@ export default function AuthForm({
                         left-3
                         top-1/2
                         -translate-y-1/2
-                        text-slate-400
+                        text-muted-foreground
                       "
                     />
 
@@ -1385,16 +1385,16 @@ export default function AuthForm({
                         w-full
                         rounded-xl
                         border
-                        border-slate-200
-                        bg-white
+                        border-border
+                        bg-background
                         pl-10
                         pr-11
                         text-sm
-                        text-slate-900
+                        text-foreground
                         outline-none
                         transition
-                        placeholder:text-slate-400
-                        hover:border-slate-300
+                        placeholder:text-muted-foreground
+                        hover:border-border
                         focus:border-indigo-400
                         focus:ring-4
                         focus:ring-indigo-100
@@ -1414,9 +1414,9 @@ export default function AuthForm({
                         right-3
                         top-1/2
                         -translate-y-1/2
-                        text-slate-400
+                        text-muted-foreground
                         transition
-                        hover:text-slate-700
+                        hover:text-foreground
                       "
                       aria-label={
                         showPassword
@@ -1449,7 +1449,7 @@ export default function AuthForm({
                         block
                         text-sm
                         font-semibold
-                        text-slate-700
+                        text-foreground
                       "
                     >
                       Confirm password
@@ -1466,7 +1466,7 @@ export default function AuthForm({
                           left-3
                           top-1/2
                           -translate-y-1/2
-                          text-slate-400
+                          text-muted-foreground
                         "
                       />
 
@@ -1493,16 +1493,16 @@ export default function AuthForm({
                           w-full
                           rounded-xl
                           border
-                          border-slate-200
-                          bg-white
+                          border-border
+                          bg-background
                           pl-10
                           pr-11
                           text-sm
-                          text-slate-900
+                          text-foreground
                           outline-none
                           transition
-                          placeholder:text-slate-400
-                          hover:border-slate-300
+                          placeholder:text-muted-foreground
+                          hover:border-border
                           focus:border-violet-400
                           focus:ring-4
                           focus:ring-violet-100
@@ -1522,9 +1522,9 @@ export default function AuthForm({
                           right-3
                           top-1/2
                           -translate-y-1/2
-                          text-slate-400
+                          text-muted-foreground
                           transition
-                          hover:text-slate-700
+                          hover:text-foreground
                         "
                         aria-label={
                           showConfirmPassword
@@ -1629,7 +1629,7 @@ export default function AuthForm({
                 text-center
                 text-[11px]
                 leading-5
-                text-slate-400
+                text-muted-foreground
               ">
                 By continuing, you agree to
                 WhizBoard's Terms and Privacy Policy.
@@ -1659,7 +1659,7 @@ export default function AuthForm({
                     block
                     text-sm
                     font-semibold
-                    text-slate-700
+                    text-foreground
                   "
                 >
                   Verification code
@@ -1683,8 +1683,8 @@ export default function AuthForm({
                     w-full
                     rounded-xl
                     border
-                    border-slate-200
-                    bg-white
+                    border-border
+                    bg-background
                     px-4
                     text-center
                     text-lg
@@ -1692,7 +1692,7 @@ export default function AuthForm({
                     tracking-[0.35em]
                     outline-none
                     transition
-                    placeholder:text-slate-400
+                    placeholder:text-muted-foreground
                     placeholder:tracking-normal
                     focus:border-indigo-400
                     focus:ring-4
@@ -1772,8 +1772,8 @@ export default function AuthForm({
                   w-full
                   text-xs
                   font-semibold
-                  text-indigo-600
-                  hover:text-violet-600
+                  text-indigo-600 dark:text-indigo-300
+                  hover:text-violet-600 dark:hover:text-violet-300
                   disabled:opacity-50
                 "
               >
@@ -1806,7 +1806,7 @@ export default function AuthForm({
                     block
                     text-sm
                     font-semibold
-                    text-slate-700
+                    text-foreground
                   "
                 >
                   Email
@@ -1822,7 +1822,7 @@ export default function AuthForm({
                       left-3
                       top-1/2
                       -translate-y-1/2
-                      text-slate-400
+                      text-muted-foreground
                     "
                   />
 
@@ -1843,14 +1843,14 @@ export default function AuthForm({
                       w-full
                       rounded-xl
                       border
-                      border-slate-200
-                      bg-white
+                      border-border
+                      bg-background
                       pl-10
                       pr-3
                       text-sm
                       outline-none
                       transition
-                      placeholder:text-slate-400
+                      placeholder:text-muted-foreground
                       focus:border-indigo-400
                       focus:ring-4
                       focus:ring-indigo-100
@@ -1941,7 +1941,7 @@ export default function AuthForm({
                     block
                     text-sm
                     font-semibold
-                    text-slate-700
+                    text-foreground
                   "
                 >
                   Reset code
@@ -1965,14 +1965,14 @@ export default function AuthForm({
                     w-full
                     rounded-xl
                     border
-                    border-slate-200
+                    border-border
                     px-4
                     text-center
                     text-lg
                     font-semibold
                     tracking-[0.35em]
                     outline-none
-                    placeholder:text-slate-400
+                    placeholder:text-muted-foreground
                     placeholder:tracking-normal
                     focus:border-indigo-400
                     focus:ring-4
@@ -2062,7 +2062,7 @@ export default function AuthForm({
                     block
                     text-sm
                     font-semibold
-                    text-slate-700
+                    text-foreground
                   "
                 >
                   New password
@@ -2078,7 +2078,7 @@ export default function AuthForm({
                       left-3
                       top-1/2
                       -translate-y-1/2
-                      text-slate-400
+                      text-muted-foreground
                     "
                   />
 
@@ -2103,7 +2103,7 @@ export default function AuthForm({
                       w-full
                       rounded-xl
                       border
-                      border-slate-200
+                      border-border
                       pl-10
                       pr-11
                       outline-none
@@ -2126,7 +2126,7 @@ export default function AuthForm({
                       right-3
                       top-1/2
                       -translate-y-1/2
-                      text-slate-400
+                      text-muted-foreground
                     "
                   >
                     {showPassword ? (
@@ -2150,7 +2150,7 @@ export default function AuthForm({
                     block
                     text-sm
                     font-semibold
-                    text-slate-700
+                    text-foreground
                   "
                 >
                   Confirm new password
@@ -2179,7 +2179,7 @@ export default function AuthForm({
                     w-full
                     rounded-xl
                     border
-                    border-slate-200
+                    border-border
                     px-3
                     outline-none
                     focus:border-indigo-400
@@ -2257,7 +2257,7 @@ export default function AuthForm({
         justify-center
         gap-2
         text-xs
-        text-slate-400
+        text-muted-foreground
       ">
         <LockKeyhole size={13} />
         Secure authentication powered by Clerk
@@ -2297,17 +2297,17 @@ function OAuthButton({
         gap-2.5
         rounded-xl
         border
-        border-slate-200
-        bg-white
+        border-border
+        bg-background
         text-sm
         font-semibold
-        text-slate-700
+        text-foreground
         shadow-sm
         transition
         hover:-translate-y-0.5
         hover:border-indigo-200
-        hover:bg-indigo-50
-        hover:text-indigo-700
+        hover:bg-indigo-50 dark:hover:bg-primary/10
+        hover:text-indigo-700 dark:hover:text-primary
         disabled:cursor-not-allowed
         disabled:opacity-60
       "

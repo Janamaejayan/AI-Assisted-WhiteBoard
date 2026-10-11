@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Dialog,
     DialogClose,
@@ -17,14 +17,42 @@ import { toast } from '@/components/ui/toast'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 
-const CreateNewBoardDialogue = () => {
+type Props = {
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+    openAiOnCreate?: boolean
+    hideTrigger?: boolean
+}
+
+const CreateNewBoardDialogue = ({
+    open,
+    onOpenChange,
+    openAiOnCreate = false,
+    hideTrigger = false,
+}: Props) => {
     const [workspaceName, setWorkspaceName] = useState('')
     const [loading, setLoading] = useState(false)
-    const [dialogue, setDialogue] = useState(false)
+    const [internalDialogue, setInternalDialogue] = useState(false)
+    const dialogue = open ?? internalDialogue
+    const setDialogue = onOpenChange ?? setInternalDialogue
+    const [summary, setSummary] = useState<{ count: number; total: number | null } | null>(null)
+    const atLimit = summary?.total != null && summary.count >= summary.total
 
     const router = useRouter()
 
+    useEffect(() => {
+        if (!dialogue) return
+
+        let active = true
+        axios.get<{ count: number; total: number | null }>('/api/projects?summary=true')
+            .then(({ data }) => { if (active) setSummary(data) })
+            .catch((error) => console.error('Failed to load board limit:', error))
+
+        return () => { active = false }
+    }, [dialogue])
+
     const handleCreateBoard = async () => {
+        if (atLimit) return
         if (
             workspaceName.trim() === '' ||
             workspaceName.length > 30
@@ -58,9 +86,25 @@ const CreateNewBoardDialogue = () => {
 
             setDialogue(false)
 
-            router.push(`/workspace/${projectId}`)
+            window.dispatchEvent(new Event('projects:changed'))
+
+            router.push(`/workspace/${projectId}${openAiOnCreate ? '?ai=1' : ''}`)
         } catch (error) {
             console.error('Failed to create workspace:', error)
+
+            if (axios.isAxiosError(error) && error.response?.status === 409) {
+                setSummary((current) => current?.total == null ? current : {
+                    ...current,
+                    count: current.total,
+                })
+                window.dispatchEvent(new Event('projects:changed'))
+                toast.add({
+                    title: 'Board limit reached',
+                    description: 'Archive a board before creating another one.',
+                    type: 'error',
+                })
+                return
+            }
 
             toast.add({
                 title: 'Failed to Create Workspace',
@@ -79,24 +123,28 @@ const CreateNewBoardDialogue = () => {
             onOpenChange={setDialogue}
         >
             {/* Dialog Trigger */}
-            <DialogTrigger
-                render={
-                    <Button className="w-full">
-                        <Plus />
-                        Create New Board
-                    </Button>
-                }
-            />
+            {!hideTrigger && (
+                <DialogTrigger
+                    render={
+                        <Button className="w-full">
+                            <Plus />
+                            Create New Board
+                        </Button>
+                    }
+                />
+            )}
 
             {/* Dialog Content */}
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle className="text-lg font-bold">
-                        White Board Workspace Name
+                        {openAiOnCreate
+                            ? 'Create a workspace to use AI Helper'
+                            : 'White Board Workspace Name'}
                     </DialogTitle>
 
                     <div>
-                        <label className="text-gray-600">
+                        <label className="text-muted-foreground">
                             Enter WhiteBoard workspace name
                         </label>
 
@@ -109,6 +157,12 @@ const CreateNewBoardDialogue = () => {
                             }
                         />
                     </div>
+
+                    {atLimit && (
+                        <p className="text-sm text-destructive">
+                            You have reached your {summary.total} board limit. Archive a board to create another.
+                        </p>
+                    )}
                 </DialogHeader>
 
                 <DialogFooter>
@@ -125,6 +179,7 @@ const CreateNewBoardDialogue = () => {
                     <Button
                         disabled={
                             workspaceName.trim().length === 0 ||
+                            atLimit ||
                             loading
                         }
                         onClick={handleCreateBoard}
@@ -133,7 +188,7 @@ const CreateNewBoardDialogue = () => {
                             <LoaderCircle className="animate-spin" />
                         )}
 
-                        Create
+                        {openAiOnCreate ? 'Create & Open AI' : 'Create'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

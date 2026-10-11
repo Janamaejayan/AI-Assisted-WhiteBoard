@@ -12,6 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "@/components/ui/toast";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type Project = {
   projectName: string;
@@ -60,33 +61,42 @@ const ArchivePage = () => {
 
   const handleRestore = async (projectId: string) => {
     try {
-        setRestoringProjectId(projectId);
+      setRestoringProjectId(projectId);
 
-        await axios.patch(
+      await axios.patch(
         `/api/projects?projectId=${projectId}&action=restore`
-        );
+      );
 
-        // Remove from archive immediately
-        setProjectList((prev) =>
+      setProjectList((prev) =>
         prev.filter((project) => project.projectId !== projectId)
-        );
+      );
+      window.dispatchEvent(new Event("projects:changed"));
 
-        toast.add({
+      toast.add({
         title: "Project restored",
         description: "The project has been restored successfully.",
-        });
+      });
     } catch (error) {
-        console.error("Failed to restore project:", error);
+      console.error("Failed to restore project:", error);
 
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
         toast.add({
+          title: "Board limit reached",
+          description: "Archive another board before restoring this one.",
+          type: "error",
+        });
+        return;
+      }
+
+      toast.add({
         title: "Restore failed",
         description: "Unable to restore the project.",
         type: "error",
-        });
+      });
     } finally {
-        setRestoringProjectId(null);
+      setRestoringProjectId(null);
     }
-    };
+  };
 
   // ============================================
   // PERMANENT DELETE
@@ -94,47 +104,42 @@ const ArchivePage = () => {
 
   const handlePermanentDelete = async (projectId: string) => {
     const confirmed = window.confirm(
-        "Are you sure you want to permanently delete this project? This action cannot be undone."
+      "Are you sure you want to permanently delete this project? This action cannot be undone."
     );
 
     if (!confirmed) return;
 
     try {
-        setDeletingProjectId(projectId);
+      setDeletingProjectId(projectId);
 
-        await axios.delete(
-            `/api/projects?projectId=${projectId}&permanent=true`
-        );
+      await axios.delete(
+        `/api/projects?projectId=${projectId}&permanent=true`
+      );
 
-        // Remove from archive immediately
-        setProjectList((prev) =>
-            prev.filter(
-                (project) => project.projectId !== projectId
-            )
-        );
+      setProjectList((prev) =>
+        prev.filter((project) => project.projectId !== projectId)
+      );
 
-        toast.add({
-            title: "Project deleted",
-            description: "The project was permanently deleted.",
-        });
-
+      toast.add({
+        title: "Project deleted",
+        description: "The project was permanently deleted.",
+      });
     } catch (error) {
-        console.error(
-            "Failed to permanently delete project:",
-            error
-        );
+      console.error(
+        "Failed to permanently delete project:",
+        error
+      );
 
-        toast.add({
-            title: "Delete failed",
-            description:
-                "Unable to permanently delete the project.",
-            type: "error",
-        });
-
+      toast.add({
+        title: "Delete failed",
+        description:
+          "Unable to permanently delete the project.",
+        type: "error",
+      });
     } finally {
-        setDeletingProjectId(null);
+      setDeletingProjectId(null);
     }
-};
+  };
 
   // ============================================
   // LOADING
@@ -150,53 +155,71 @@ const ArchivePage = () => {
 
   return (
     <div className="min-h-screen px-6 py-8">
+
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-              <Archive size={20} />
-            </div>
 
-            <div>
-              <h1 className="text-2xl font-semibold">Archive</h1>
+        {/* Left side */}
+        <div className="flex items-center gap-3">
+          <SidebarTrigger />
 
-              <p className="text-sm text-muted-foreground">
-                Projects you've moved to the trash
-              </p>
-            </div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+            <Archive size={20} />
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-semibold">
+              Archive
+            </h1>
+
+            <p className="text-sm text-muted-foreground">
+              Projects you've moved to the trash
+            </p>
           </div>
         </div>
 
+        {/* Project count */}
         <div className="text-sm text-muted-foreground">
           {projectList.length}{" "}
-          {projectList.length === 1 ? "project" : "projects"}
+          {projectList.length === 1
+            ? "project"
+            : "projects"}
         </div>
       </div>
 
       {/* Empty State */}
       {projectList.length === 0 ? (
         <div className="flex min-h-[450px] flex-col items-center justify-center rounded-xl border border-dashed">
+
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-            <Archive size={26} className="text-muted-foreground" />
+            <Archive
+              size={26}
+              className="text-muted-foreground"
+            />
           </div>
 
-          <h2 className="text-lg font-semibold">Archive is empty</h2>
+          <h2 className="text-lg font-semibold">
+            Archive is empty
+          </h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
             Projects you delete will appear here.
           </p>
         </div>
       ) : (
+
         /* Project Grid */
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
           {projectList.map((project) => (
             <div
               key={project.projectId}
               className="group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md"
             >
+
               {/* Preview */}
               <div className="relative aspect-video overflow-hidden bg-muted">
+
                 {project.previewImage ? (
                   <Image
                     src={project.previewImage}
@@ -221,6 +244,7 @@ const ArchivePage = () => {
 
               {/* Details */}
               <div className="p-4">
+
                 <h3
                   className="truncate font-medium"
                   title={project.projectName}
@@ -237,10 +261,13 @@ const ArchivePage = () => {
 
                 {/* Actions */}
                 <div className="mt-4 flex items-center gap-2">
+
                   {/* Restore */}
                   <button
                     type="button"
-                    onClick={() => handleRestore(project.projectId)}
+                    onClick={() =>
+                      handleRestore(project.projectId)
+                    }
                     disabled={
                       restoringProjectId === project.projectId ||
                       deletingProjectId === project.projectId
@@ -248,7 +275,10 @@ const ArchivePage = () => {
                     className="flex flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {restoringProjectId === project.projectId ? (
-                      <LoaderCircle size={16} className="animate-spin" />
+                      <LoaderCircle
+                        size={16}
+                        className="animate-spin"
+                      />
                     ) : (
                       <RotateCcw size={16} />
                     )}
@@ -278,10 +308,12 @@ const ArchivePage = () => {
                       <Trash2 size={17} />
                     )}
                   </button>
+
                 </div>
               </div>
             </div>
           ))}
+
         </div>
       )}
     </div>
